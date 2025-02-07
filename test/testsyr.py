@@ -56,7 +56,7 @@ ipa_error_count = 0
 romanized_error_count = 0
 natipa_error_count = 0
 
-debug_print = False
+debug_print = True
 test = 0
 
 for case in test_cases.keys():
@@ -99,3 +99,8 @@ if debug_print:
 
 print(f"IPA errors: {ipa_error_count}, romanized errors: {romanized_error_count}, natipa_error_count: {natipa_error_count}")
 print(f'Error rate: {((ipa_error_count + romanized_error_count + natipa_error_count) / (3 * len(test_cases))) * 100}%')
+
+
+
+# TODO:
+# - put talqana over [X] in IPA->Syr

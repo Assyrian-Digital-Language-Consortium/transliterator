@@ -1,6 +1,20 @@
-from SyrTools import SyrTools
+'''
+' @file SyrTransliterator.py
+'
+' @author The Assyrian Digital Language Consortium  
+' @date 1 Feb 2025
+'
+' @brief Syriac transliteration and phonetic approximation
+'
+' @description: This file contains the Syr class which is used 
+'               to as a base clase utility for working with Syriac 
+'               text.
+'
+' @license MIT License
+' @copyright Assyrian Digital Language Consortium  
+'''
 
-import unicodedata
+from SyrTools import SyrTools
 
 class SyrTransliterator(SyrTools):
     def __init__(self):

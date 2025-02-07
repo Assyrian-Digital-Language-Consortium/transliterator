@@ -4,7 +4,7 @@
 ' @author The Assyrian Digital Language Consortium  
 ' @date 1 Feb 2025
 '
-' @brief Syriac transliteration and phonetic approximation
+' @brief Tools for handling Syriac text
 '
 ' @description: This file contains the Syr class which is used 
 '               to as a base clase utility for working with Syriac 
