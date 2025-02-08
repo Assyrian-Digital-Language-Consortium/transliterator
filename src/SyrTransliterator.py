@@ -1,17 +1,17 @@
 """
 ' @file SyrTransliterator.py
 '
-' @author The Assyrian Digital Language Consortium  
+' @author The Assyrian Digital Language Consortium
 ' @date 1 Feb 2025
 '
 ' @brief Syriac transliteration and phonetic approximation
 '
-' @description: This file contains the Syr class which is used 
-'               to as a base clase utility for working with Syriac 
+' @description: This file contains the Syr class which is used
+'               to as a base clase utility for working with Syriac
 '               text.
 '
 ' @license MIT License
-' @copyright Assyrian Digital Language Consortium  
+' @copyright Assyrian Digital Language Consortium
 """
 
 from SyrTools import SyrTools
@@ -146,10 +146,14 @@ class SyrTransliterator(SyrTools):
             token_str = f"[{token_str}]"
 
         for key in self.mater_lectionis_ipa_map:
-            token_str = token_str.replace(key, self.mater_lectionis_ipa_map[key])
+            token_str = token_str.replace(
+                key, self.mater_lectionis_ipa_map[key]
+            )
 
         for key in self.rukakheh_qushayeh_ipa_map:
-            token_str = token_str.replace(key, self.rukakheh_qushayeh_ipa_map[key])
+            token_str = token_str.replace(
+                key, self.rukakheh_qushayeh_ipa_map[key]
+            )
 
         for key in self.majleaneh_ipa_map:
             token_str = token_str.replace(key, self.majleaneh_ipa_map[key])
@@ -167,7 +171,10 @@ class SyrTransliterator(SyrTools):
             self.mater_lectionis_ipa_map.values()
         )
 
-        """Convert IPA to a more naturalized pronunciation by applying pronunciation rules."""
+        """
+        Convert IPA to a more naturalized pronunciation by applying
+        pronunciation rules.
+        """
         ipa_chars = list(ipa)  # Convert to list for easy modification
 
         # Remove initial ʔ if followed by 'i', 'u', or 'o'
@@ -217,7 +224,8 @@ class SyrTransliterator(SyrTools):
             if c not in self.LETTER:
                 cluster.append(c)
             else:
-                # create a sub-token in consonant, majleana, diacritic, vocalization order
+                # create a sub-token in consonant, majleana, diacritic,
+                # vocalization order
                 ret_tokens += self.tokenize_cluster(cluster)
                 cluster = [c]
         ret_tokens += self.tokenize_cluster(cluster)
@@ -249,20 +257,14 @@ class SyrTransliterator(SyrTools):
     def split_ipa_text(self, text):
         result = []
         word = ""
-
+        punctuations = [",", ":", ";", "!", ".", "-", "<", ">", "?", "'", '"']
         for char in text:
-            if (
-                char in [",", ":", ";", "!", ".", "-", "<", ">", "?", "'", '"']
-                or char.isspace()
-            ):
+            if char in punctuations or char.isspace():
                 if word:
                     result.append(word)  # Store the word collected so far
                     word = ""
-                if (
-                    char in [",", ":", ";", "!", ".", "-", "<", ">", "?", "'", '"']
-                    or char.isspace()
-                ):
-                    result.append(char)  # Store punctuation as a standalone element
+                if char in punctuations or char.isspace():
+                    result.append(char)  # Store punctuation
             else:
                 word += char  # Keep building a word
 
@@ -362,7 +364,10 @@ class SyrTransliterator(SyrTools):
         return word
 
     def remove_bracketed_content(self, ipa_text):
-        """Removes characters inside square brackets, including the brackets themselves."""
+        """
+        Removes characters inside square brackets, including the brackets
+        themselves.
+        """
         result = []
         inside_brackets = False
         for char in ipa_text:
@@ -423,6 +428,7 @@ class SyrTransliterator(SyrTools):
                 self.mater_lectionis_ipa_map,
                 self.consonant_ipa_map,
                 self.eastern_vowel_ipa_map,
+                self.punctuation_replacements,
             ]:
                 ipa_to_syriac_map.update(self.invert_dict(original_map))
         else:
@@ -432,10 +438,14 @@ class SyrTransliterator(SyrTools):
                 self.mater_lectionis_ipa_map,
                 self.consonant_ipa_map,
                 self.western_vowel_ipa_map,
+                self.punctuation_replacements,
             ]:
                 ipa_to_syriac_map.update(self.invert_dict(original_map))
 
-        """Convert an IPA transcription to Syriac script using the generated mapping."""
+        """
+        Convert an IPA transcription to Syriac script using the generated
+        mapping.
+        """
         result = []
         i = 0
         while i < len(ipa_text):
@@ -454,6 +464,18 @@ class SyrTransliterator(SyrTools):
             if not found:
                 result.append(ipa_text[i])  # Keep unknown characters as-is
                 i += 1
-        return "".join(result)
 
-    # You have the lossless IPA, now make the lossy IPA which is more phonetic (no unneeded glottal stops, shortened ee->i if needed, bdols, )
+            syr_text = "".join(result)
+
+            result = []
+            inside_brackets = False
+            for char in syr_text:
+                if char == "[":
+                    inside_brackets = True
+                elif char == "]":
+                    if not inside_brackets:
+                        result.append(self.OBLIQUE_LINE_ABOVE)
+                    inside_brackets = False
+                elif not inside_brackets:
+                    result.append(char)
+        return "".join(result)

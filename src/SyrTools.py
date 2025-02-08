@@ -1,25 +1,25 @@
 """
 ' @file SyrTools.py
 '
-' @author The Assyrian Digital Language Consortium  
+' @author The Assyrian Digital Language Consortium
 ' @date 1 Feb 2025
 '
 ' @brief Tools for handling Syriac text
 '
-' @description: This file contains the Syr class which is used 
-'               to as a base clase utility for working with Syriac 
+' @description: This file contains the Syr class which is used
+'               to as a base clase utility for working with Syriac
 '               text.
 '
 ' @license MIT License
-' @copyright Assyrian Digital Language Consortium  
+' @copyright Assyrian Digital Language Consortium
 """
 
 
 class SyrTools:
     def __init__(self):
-        # --------------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         # 1) Punctuation and Special Marks
-        # --------------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         self.END_OF_PARAGRAPH = "\u0700"  # ܀
         self.SUPRALINEAR_FULL_STOP = "\u0701"  # ܁
         self.SUBLINEAR_FULL_STOP = "\u0702"  # ܂
@@ -30,17 +30,17 @@ class SyrTools:
         self.COLON_SKEWED_RIGHT = "\u0707"  # ܇
         self.SUPRALINEAR_COLON_SKEWED_LEFT = "\u0708"  # ܈
         self.SUBLINEAR_COLON_SKEWED_RIGHT = "\u0709"  # ܉
-        self.CONTRACTION = "\u070A"  # ܊
-        self.HARKLEAN_OBELUS = "\u070B"  # ܋
-        self.HARKLEAN_METOBELUS = "\u070C"  # ܌
-        self.HARKLEAN_ASTERISCUS = "\u070D"  # ܍
-        self.ABBREVIATION_MARK = "\u070F"  # ܏
-        self.BARREKH = "\u074A"  # ݊
+        self.CONTRACTION = "\u070a"  # ܊
+        self.HARKLEAN_OBELUS = "\u070b"  # ܋
+        self.HARKLEAN_METOBELUS = "\u070c"  # ܌
+        self.HARKLEAN_ASTERISCUS = "\u070d"  # ܍
+        self.ABBREVIATION_MARK = "\u070f"  # ܏
+        self.BARREKH = "\u074a"  # ݊
         self.MUSIC = "\u0749"  # ݉
 
-        # --------------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         # 2) Letters
-        # --------------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         self.LETTER_ALAPH = "\u0710"  # ܐ
         self.LETTER_SUPERSCRIPT_ALAPH = "\u0711"  # ܑ
         self.LETTER_BETH = "\u0712"  # ܒ
@@ -51,12 +51,12 @@ class SyrTools:
         self.LETTER_HE = "\u0717"  # ܗ
         self.LETTER_WAW = "\u0718"  # ܘ
         self.LETTER_ZAIN = "\u0719"  # ܙ
-        self.LETTER_HETH = "\u071A"  # ܚ
-        self.LETTER_TETH = "\u071B"  # ܛ
-        self.LETTER_TETH_GARSHUNI = "\u071C"  # ܜ
-        self.LETTER_YUDH = "\u071D"  # ܝ
-        self.LETTER_YUDH_HE = "\u071E"  # ܞ
-        self.LETTER_KAPH = "\u071F"  # ܟ
+        self.LETTER_HETH = "\u071a"  # ܚ
+        self.LETTER_TETH = "\u071b"  # ܛ
+        self.LETTER_TETH_GARSHUNI = "\u071c"  # ܜ
+        self.LETTER_YUDH = "\u071d"  # ܝ
+        self.LETTER_YUDH_HE = "\u071e"  # ܞ
+        self.LETTER_KAPH = "\u071f"  # ܟ
         self.LETTER_LAMADH = "\u0720"  # ܠ
         self.LETTER_MIM = "\u0721"  # ܡ
         self.LETTER_NUN = "\u0722"  # ܢ
@@ -67,31 +67,31 @@ class SyrTools:
         self.LETTER_REVERSED_PE = "\u0727"  # ܧ
         self.LETTER_SADHE = "\u0728"  # ܨ
         self.LETTER_QAPH = "\u0729"  # ܩ
-        self.LETTER_RISH = "\u072A"  # ܪ
-        self.LETTER_SHIN = "\u072B"  # ܫ
-        self.LETTER_TAW = "\u072C"  # ܬ
+        self.LETTER_RISH = "\u072a"  # ܪ
+        self.LETTER_SHIN = "\u072b"  # ܫ
+        self.LETTER_TAW = "\u072c"  # ܬ
 
-        # --------------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         # 3) Garshuni (Persian and Sogdian) Letters
-        # --------------------------------------------------------------------------
-        self.LETTER_PERSIAN_BHETH = "\u072D"  # ܭ
-        self.LETTER_PERSIAN_GHAMAL = "\u072E"  # ܮ
-        self.LETTER_PERSIAN_DHALATH = "\u072F"  # ܯ
-        self.LETTER_SOGDIAN_ZHAIN = "\u074D"  # ݍ
-        self.LETTER_SOGDIAN_KHAPH = "\u074E"  # ݎ
-        self.LETTER_SOGDIAN_FE = "\u074F"  # ݏ
+        # ---------------------------------------------------------------------
+        self.LETTER_PERSIAN_BHETH = "\u072d"  # ܭ
+        self.LETTER_PERSIAN_GHAMAL = "\u072e"  # ܮ
+        self.LETTER_PERSIAN_DHALATH = "\u072f"  # ܯ
+        self.LETTER_SOGDIAN_ZHAIN = "\u074d"  # ݍ
+        self.LETTER_SOGDIAN_KHAPH = "\u074e"  # ݎ
+        self.LETTER_SOGDIAN_FE = "\u074f"  # ݏ
 
-        # --------------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         # 4) Vowel Marks (Zlameh, Ptakheh, Rwasa, Esasa, Hbasa, Zqapa, Rwakha)
-        # --------------------------------------------------------------------------
+        # ---------------------------------------------------------------------
 
         self.PTHAHA_DOTTED = "\u0732"  # ܲ
         self.ZQAPHA_DOTTED = "\u0735"  # ܵ
         self.DOTTED_ZLAMA_HORIZONTAL = "\u0738"  # ܸ
         self.DOTTED_ZLAMA_ANGULAR = "\u0739"  # ܹ
 
-        self.HBASA_ESASA_DOTTED = "\u073C"  # ܼ
-        self.RWAHA = "\u073F"  # ܿ
+        self.HBASA_ESASA_DOTTED = "\u073c"  # ܼ
+        self.RWAHA = "\u073f"  # ܿ
 
         self.PTHAHA_ABOVE = "\u0730"  # ܰ
         self.PTHAHA_BELOW = "\u0731"  # ܱ
@@ -99,14 +99,14 @@ class SyrTools:
         self.ZQAPHA_BELOW = "\u0734"  # ܴ
         self.RBASA_ABOVE = "\u0736"  # ܶ
         self.RBASA_BELOW = "\u0737"  # ܷ
-        self.HBASA_ABOVE = "\u073A"  # ܺ
-        self.HBASA_BELOW = "\u073B"  # ܻ
-        self.ESASA_ABOVE = "\u073D"  # ܽ
-        self.ESASA_BELOW = "\u073E"  # ܾ
+        self.HBASA_ABOVE = "\u073a"  # ܺ
+        self.HBASA_BELOW = "\u073b"  # ܻ
+        self.ESASA_ABOVE = "\u073d"  # ܽ
+        self.ESASA_BELOW = "\u073e"  # ܾ
 
-        # --------------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         # 5) Other Diacritical/Grammatical Marks
-        # --------------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         self.QUSHSHAYA = "\u0741"  # ݁
         self.RUKKAKHA = "\u0742"  # ݂
         self.TWO_VERTICAL_DOTS_ABOVE = "\u0743"  # ݃
@@ -117,27 +117,27 @@ class SyrTools:
         self.OBLIQUE_LINE_BELOW = "\u0748"  # ݈
         # (self.BARREKH and self.MUSIC are defined above under punctuation)
 
-        # --------------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         # 6) Generic Combining Diacritical Marks (non-Syriac block)
-        # --------------------------------------------------------------------------
-        self.COMBINING_TILDE_BELOW = "\u0330"  #  ̰ (U+0330)
-        self.COMBINING_TILDE_ABOVE = "\u0303"  #  ̃ (U+0303)
-        self.COMBINING_MACRON_BELOW = "\u0331"  #  ̱ (U+0331)
-        self.COMBINING_MACRON = "\u0304"  #  ̄ (U+0304)
-        self.COMBINING_BREVE_BELOW = "\u032E"  #  ̮ (U+032E)
-        self.COMBINING_DIAERESIS = "\u0308"  #  ̈ (U+0308)
-        self.COMBINING_DIAERESIS_BELOW = "\u0324"  #  ̈ (U+0324)
-        self.COMBINING_DOT_BELOW = "\u0323"  #  ̣ (U+0323)
-        self.COMBINING_DOT_ABOVE = "\u0307"  #  ̇ (U+0307)
+        # ---------------------------------------------------------------------
+        self.COMBINING_TILDE_BELOW = "\u0330"  # (U+0330)  ̰
+        self.COMBINING_TILDE_ABOVE = "\u0303"  # (U+0303)  ̃
+        self.COMBINING_MACRON_BELOW = "\u0331"  # (U+0331) ̱
+        self.COMBINING_MACRON = "\u0304"  # (U+0304) ̄
+        self.COMBINING_BREVE_BELOW = "\u032e"  # (U+032E)  ̮
+        self.COMBINING_DIAERESIS = "\u0308"  # (U+0308) ̈
+        self.COMBINING_DIAERESIS_BELOW = "\u0324"  # (U+0324)  ̈
+        self.COMBINING_DOT_BELOW = "\u0323"  # (U+0323)  ̣
+        self.COMBINING_DOT_ABOVE = "\u0307"  # (U+0307) ̇
 
-        # --------------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         # 7) Decorative Characters (non-Syriac block)
-        # --------------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         self.KASHIDA = "\u0640"  # ـ (U+0640)
 
-        # --------------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         # 8) Useful sets for easy reference
-        # --------------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         self.LETTER = (
             self.LETTER_ALAPH,
             self.LETTER_SUPERSCRIPT_ALAPH,
@@ -425,7 +425,8 @@ class SyrTools:
         return "".join([c for c in text if c in self.LETTER])
 
     """
-    This function returns true if the given text contains any Syriac characters.
+    This function returns true if the given text contains any
+    Syriac characters.
     """
 
     def isSyr(self, text):
@@ -466,7 +467,8 @@ class SyrTools:
         return False
 
     """
-    This function returns true if the given text contains any Garshuni characters.
+    This function returns true if the given text contains any Garshuni
+    characters.
     """
 
     def contains_garshuni(self, text):
@@ -476,7 +478,8 @@ class SyrTools:
         return False
 
     """
-    This function returns true if the given text contains any non-vowel diacritics.
+    This function returns true if the given text contains any non-vowel
+    diacritics.
     """
 
     def contains_non_vowel_diacritics(self, text):
