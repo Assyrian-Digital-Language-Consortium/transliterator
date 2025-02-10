@@ -1,0 +1,74 @@
+# -------------------------
+# macOS-specific files
+# -------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Sometimes macOS generates an __MACOSX folder when zipping files
+__MACOSX/
+
+# -------------------------
+# Python bytecode
+# -------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# -------------------------
+# Virtual environments
+# -------------------------
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# -------------------------
+# Distribution / build
+# -------------------------
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+parts/
+var/
+sdist/
+wheels/
+
+# -------------------------
+# Installer logs
+# -------------------------
+pip-log.txt
+pip-delete-this-directory.txt
+
+# -------------------------
+# Unit test / coverage
+# -------------------------
+.coverage
+.tox/
+htmlcov/
+.coverage.*
+.cache
+.pytest_cache/
+
+# -------------------------
+# Editor-specific or OS
+# -------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# -------------------------
+# Jupyter Notebook checkpoints
+# -------------------------
+.ipynb_checkpoints
+
+# -------------------------
+# Other
+# -------------------------
+*.log
