@@ -4,9 +4,9 @@ import pytest
 
 script_path = os.path.realpath(__file__)
 script_dir = os.path.dirname(script_path)
+src_dir = f'{script_dir}/../src/'
 
-# caution: path[0] is reserved for script path (or '' in REPL)
-sys.path.insert(1, f'{script_dir}/../src/')
+sys.path.insert(1, src_dir)
 
 from SyrTools import SyrTools
 
