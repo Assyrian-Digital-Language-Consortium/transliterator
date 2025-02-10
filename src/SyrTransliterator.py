@@ -14,6 +14,7 @@
 ' @copyright Assyrian Digital Language Consortium
 """
 
+import json
 from typing import Dict, List, Tuple
 from SyrTools import SyrTools
 
@@ -27,13 +28,98 @@ class SyrTransliterator(SyrTools):
     specific to transliteration.
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self, dialect_map_filename: str = "", ipa_mapping_filename: str = ""
+    ) -> None:
         """
         Initialize the SyrTransliterator with IPA-to-Roman mappings,
         punctuation replacements, and various IPA vowel and consonant
         collections.
         """
         super().__init__()
+
+        self.rukakheh_qushayeh_ipa_map: Dict[str, str] = {
+            "ܒ݂": "v",
+            "ܓ݂": "ɣ",
+            "ܕ݂": "ð",
+            "ܟ݂": "x",
+            "ܦ݂": "f",
+            "ܦ̮": "f",
+            "ܬ݂": "θ",
+            "ܒ݁": "ܒ",
+            "ܓ݁": "g",
+            "ܕ݁": "d",
+            "ܟ݁": "k",
+            "ܦ݁": "p",
+            "ܬ݁": "t",
+        }
+
+        self.majleaneh_ipa_map: Dict[str, str] = {
+            "ܓ̰": "ʤ",
+            "ܙ̰": "ʒ",
+            "ܙ̃": "ʒ",
+            "ܟ̰": "tʃ",
+            "ܟ̃": "tʃ",
+            "ܫ̃": "ʒ",
+            "ܫ̰": "ʒ",
+        }
+
+        self.mater_lectionis_ipa_map: Dict[str, str] = {
+            "ܘܼ": "u",
+            "ܘܿ": "o",
+            "ܝܼ": "i",
+        }
+
+        self.consonant_ipa_map: Dict[str, str] = {
+            "ܐ": "ʔ",
+            self.LETTER_SUPERSCRIPT_ALAPH: "ʔ",
+            "ܒ": "b",
+            "ܓ": "g",
+            "ܔ": "ʤ",
+            "ܕ": "d",
+            "ܗ": "h",
+            "ܘ": "w",
+            "ܙ": "z",
+            "ܚ": "ḥ",
+            "ܛ": "tˤ",
+            "ܝ": "j",
+            "ܟ": "k",
+            "ܠ": "l",
+            "ܡ": "m",
+            "ܢ": "n",
+            "ܣ": "s",
+            self.LETTER_FINAL_SEMKATH: "s",
+            "ܥ": "ʕ",
+            "ܦ": "p",
+            "ܨ": "sˤ",
+            "ܩ": "q",
+            "ܪ": "r",
+            "ܖ̈": "r",
+            "ܫ": "ʃ",
+            "ܬ": "t",
+        }
+
+        self.prepositional_b = "o"
+
+        self.eastern_vowel_ipa_map: Dict[str, str] = {
+            self.PTHAHA_DOTTED: "a",
+            self.ZQAPHA_DOTTED: "ɑ",
+            self.DOTTED_ZLAMA_HORIZONTAL: "ɪ",
+            self.DOTTED_ZLAMA_ANGULAR: "e",
+        }
+
+        self.western_vowel_ipa_map: Dict[str, str] = {
+            self.PTHAHA_ABOVE: "a",
+            self.PTHAHA_BELOW: "a",
+            self.ZQAPHA_ABOVE: "o",
+            self.ZQAPHA_BELOW: "o",
+            self.RBASA_ABOVE: "e",
+            self.RBASA_BELOW: "e",
+            self.HBASA_ABOVE: "ɪ",
+            self.HBASA_BELOW: "ɪ",
+            self.ESASA_ABOVE: "u",
+            self.ESASA_BELOW: "u",
+        }
 
         self.ipa_to_roman_map: Dict[str, str] = {
             # Rukakheh & Qushayeh
@@ -110,40 +196,92 @@ class SyrTransliterator(SyrTools):
             "؛": ";",
         }
 
+        if ipa_mapping_filename != "":
+            with open(ipa_mapping_filename, "r", encoding="utf-8") as f:
+                mappings = json.load(f)
+                consonants = mappings["consonants"]
+                bgdfkt = mappings["bgdfkt"]
+                majleaneh = mappings["majleaneh"]
+                mater_lectionis = mappings["mater_lectionis"]
+                eastern_vowels = mappings["eastern_vowels"]
+                western_vowels = mappings["western_vowels"]
+
+                for key in self.consonant_ipa_map.keys():
+                    self.consonant_ipa_map[key] = consonants[key]
+                for key in self.rukakheh_qushayeh_ipa_map.keys():
+                    self.rukakheh_qushayeh_ipa_map[key] = bgdfkt[key]
+                for key in self.majleaneh_ipa_map.keys():
+                    self.majleaneh_ipa_map[key] = majleaneh[key]
+                for key in self.mater_lectionis_ipa_map.keys():
+                    self.mater_lectionis_ipa_map[key] = mater_lectionis[key]
+
+                self.eastern_vowel_ipa_map[self.PTHAHA_DOTTED] = (
+                    eastern_vowels["ptakha"]
+                )
+                self.eastern_vowel_ipa_map[self.ZQAPHA_DOTTED] = (
+                    eastern_vowels["zqappa"]
+                )
+                self.eastern_vowel_ipa_map[self.DOTTED_ZLAMA_HORIZONTAL] = (
+                    eastern_vowels["zlama_kirya"]
+                )
+                self.eastern_vowel_ipa_map[self.DOTTED_ZLAMA_ANGULAR] = (
+                    eastern_vowels["zlama_yarikha"]
+                )
+
+                self.western_vowel_ipa_map[self.PTHAHA_ABOVE] = western_vowels[
+                    "pthaha_above"
+                ]
+                self.western_vowel_ipa_map[self.PTHAHA_BELOW] = western_vowels[
+                    "pthaha_below"
+                ]
+                self.western_vowel_ipa_map[self.ZQAPHA_ABOVE] = western_vowels[
+                    "zqapha_above"
+                ]
+                self.western_vowel_ipa_map[self.ZQAPHA_BELOW] = western_vowels[
+                    "zqapha_below"
+                ]
+                self.western_vowel_ipa_map[self.RBASA_ABOVE] = western_vowels[
+                    "rbasa_above"
+                ]
+                self.western_vowel_ipa_map[self.RBASA_BELOW] = western_vowels[
+                    "rbasa_below"
+                ]
+                self.western_vowel_ipa_map[self.HBASA_ABOVE] = western_vowels[
+                    "hbasa_above"
+                ]
+                self.western_vowel_ipa_map[self.HBASA_BELOW] = western_vowels[
+                    "hbasa_below"
+                ]
+                self.western_vowel_ipa_map[self.ESASA_ABOVE] = western_vowels[
+                    "esasa_above"
+                ]
+                self.western_vowel_ipa_map[self.ESASA_BELOW] = western_vowels[
+                    "esasa_below"
+                ]
+
+        if dialect_map_filename != "":
+            with open(dialect_map_filename, "r", encoding="utf-8") as f:
+                mappings = json.load(f)
+                romanization = mappings["romanization"]
+                self.prepositional_b = mappings["prepositional_b"]
+                for key in self.ipa_to_roman_map.keys():
+                    self.ipa_to_roman_map[key] = romanization[key]
+
         self.ipa_vowels: List[str] = (
             list(self.eastern_vowel_ipa_map.values())
             + list(self.western_vowel_ipa_map.values())
             + list(self.mater_lectionis_ipa_map.values())
         )
 
-        self.ipa_bdol: Tuple[str, ...] = ("b", "d", "w", "l")
+        self.ipa_bdol: Tuple[str, str] = (
+            self.consonant_ipa_map["ܒ"],
+            self.consonant_ipa_map["ܕ"],
+            self.consonant_ipa_map["ܘ"],
+            self.consonant_ipa_map["ܠ"],
+        )
         self.ipa_mater_lectionis: List[str] = list(
             self.mater_lectionis_ipa_map.values()
         )
-
-    def remove_decorative_chars(self, text: str) -> str:
-        """
-        Remove all decorative characters from the given text.
-
-        Parameters:
-            text (str): The input Syriac text.
-
-        Returns:
-            str: The text with decorative characters removed.
-        """
-        return "".join([c for c in text if c not in self.DECORATIVE])
-
-    def remove_siyame(self, text: str) -> str:
-        """
-        Remove the combining diaeresis (used in siyame) from the text.
-
-        Parameters:
-            text (str): The input text.
-
-        Returns:
-            str: The text with the combining diaeresis removed.
-        """
-        return text.replace(self.COMBINING_DIAERESIS, "")
 
     def handle_abbreviations_and_contractions(self, text: str) -> str:
         """
@@ -458,7 +596,10 @@ class SyrTransliterator(SyrTools):
                 and tok[0] in self.ipa_bdol
                 and tok[1] not in self.ipa_vowels
             ):
-                bdolized_str += f"{tok[0]}'{tok[1:]}"
+                bdol = tok[0]
+                if tok[0] == self.consonant_ipa_map["ܘ"]:
+                    bdol = self.prepositional_b
+                bdolized_str += f"{bdol}'{tok[1:]}"
             else:
                 bdolized_str += tok
         return bdolized_str
