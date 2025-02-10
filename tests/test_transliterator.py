@@ -4,13 +4,14 @@ import pytest
 
 script_path = os.path.realpath(__file__)
 script_dir = os.path.dirname(script_path)
+src_dir = f'{script_dir}/../src/'
 
-# caution: path[0] is reserved for script path (or '' in REPL)
-sys.path.insert(1, f'{script_dir}/../src/')
+sys.path.insert(1, src_dir)
 
 from SyrTransliterator import SyrTransliterator
 
-s = SyrTransliterator()
+s = SyrTransliterator(dialect_map_filename=f'{src_dir}/dialects/koine.json',
+                      ipa_mapping_filename=f'{src_dir}/ipa/intermediate.json')
 
 test_cases = {
     "ܐܲܒܵܐ": {'ipa': 'ʔabɑʔ', 'natural_ipa': 'abɑ', 'romanized': 'aba'},
@@ -48,7 +49,7 @@ test_cases = {
     # ## Sentences with lots of features
     "ܒܨܲܦܪܵܐ ܟܹܐ ܟܵܬ݂ܒ݂ܹܢ ܐܸܓܪ̈ܵܬ݂ܵܐ": {'ipa': 'bsˤaprɑʔ keʔ kɑθven ʔɪgrɑθɑʔ', 'natural_ipa': 'bsˤaprɑʔ keʔ kɑθven ʔɪgrɑθɑ', 'romanized': 'b\'ṣapra ke kathwen igratha', 'ipa2syr': 'ܒܨܲܦܪܵܐ ܟܹܐ ܟܵܬ݂ܒ݂ܹܢ ܐܸܓܪܵܬ݂ܵܐ'},
     "ܝܵܠܘܿܦܵܐ ܟܬ݂ܝܼܒ݂ ܠܹܗ ܡܹܐܡܲܪܬܵܐ": {'ipa': 'jɑlopɑʔ kθiv leh meʔmartɑʔ', 'natural_ipa': 'jɑlopɑʔ kθɪv leh meʔmartɑ', 'romanized': 'yalopa kthiw leh me\'marta'},
-    "ܘܟܠܹܐܠܹܗ ܥܲܠ ܣܹܠܵܐ ܕܝܵܡܵܐ. ܘܚܙܹܠܝܼ ܕܐ݇ܣܸܩܠܹܗ ܕܵܒܵܐ ܡ̣ܢ ܝܵܡܵܐ.": {'ipa': 'wkleʔleh ʕal selɑʔ djɑmɑʔ. wḥzeli d[ʔ]sɪqleh dɑbɑʔ mɪn jɑmɑʔ.', 'natural_ipa': 'wkleʔleh ʕal selɑʔ djɑmɑʔ. wḥzelɪ d[ʔ]sɪqleh dɑbɑʔ mɪn jɑmɑʔ.', 'romanized': 'w\'kle\'leh ʿal sela d\'yama. w\'khzeli d\'siqleh daba min yama.', 'ipa2syr': 'ܘܟܠܹܐܠܹܗ ܥܲܠ ܣܹܠܵܐ ܕܝܵܡܵܐ. ܘܚܙܹܠܝܼ ܕܐ݇ܣܸܩܠܹܗ ܕܵܒܵܐ ܡܸܢ ܝܵܡܵܐ.'},
+    "ܘܟܠܹܐܠܹܗ ܥܲܠ ܣܹܠܵܐ ܕܝܵܡܵܐ. ܘܚܙܹܠܝܼ ܕܐ݇ܣܸܩܠܹܗ ܕܵܒܵܐ ܡ̣ܢ ܝܵܡܵܐ.": {'ipa': 'wkleʔleh ʕal selɑʔ djɑmɑʔ. wḥzeli d[ʔ]sɪqleh dɑbɑʔ mɪn jɑmɑʔ.', 'natural_ipa': 'wkleʔleh ʕal selɑʔ djɑmɑʔ. wḥzelɪ d[ʔ]sɪqleh dɑbɑʔ mɪn jɑmɑʔ.', 'romanized': 'o\'kle\'leh ʿal sela d\'yama. o\'khzeli d\'siqleh daba min yama.', 'ipa2syr': 'ܘܟܠܹܐܠܹܗ ܥܲܠ ܣܹܠܵܐ ܕܝܵܡܵܐ. ܘܚܙܹܠܝܼ ܕܐ݇ܣܸܩܠܹܗ ܕܵܒܵܐ ܡܸܢ ܝܵܡܵܐ.'},
     "ܠܵܐ ܡܗܲܝܡܢܸܬ ܠܚܲܒܪ̈ܵܢܹܐ ܕܫܡܝܼܥ ܠܘܼܟ݂": {'ipa': 'lɑʔ mhajmnɪt lḥabrɑneʔ dʃmiʕ lux', 'natural_ipa': 'lɑʔ mhajmnɪt lḥabrɑneʔ dʃmɪʕ lux', 'romanized': 'la mhaymnit l\'khabrane d\'shmiʿ lukh', 'ipa2syr': 'ܠܵܐ ܡܗܲܝܡܢܸܬ ܠܚܲܒܪܵܢܹܐ ܕܫܡܝܼܥ ܠܘܼܟ݂'},
     "ܠܵܐ ܟܹܐ ܝܵܕ݂ܥܹܢ ܚܲܒܪ̈ܵܢܹܐ ܕܗ̇ܝ ܙܡܵܪܬܵܐ": {'ipa': 'lɑʔ keʔ jɑðʕen ḥabrɑneʔ dʔɑjɑ zmɑrtɑʔ', 'natural_ipa': 'lɑʔ keʔ jɑðʕen ḥabrɑneʔ dʔɑjɑ zmɑrtɑ', 'romanized': 'la ke yadhʿen khabrane d\'aya zmarta', 'ipa2syr': 'ܠܵܐ ܟܹܐ ܝܵܕ݂ܥܹܢ ܚܲܒܪܵܢܹܐ ܕܐܵܝܵ ܙܡܵܪܬܵܐ'},
     "ܒܲܛܵܪܝܼܬ݂ܵܐ ܗܸܫ ܡܠܵܝܵܐ ܝܠܵܗ̇": {'ipa': 'batˤɑriθɑʔ hɪʃ mlɑjɑʔ ilɑh', 'natural_ipa': 'batˤɑrɪθɑʔ hɪʃ mlɑjɑʔ ɪlɑh', 'romanized': 'baṭaritha hish mlaya ilah', 'ipa2syr': 'ܒܲܛܵܪܝܼܬ݂ܵܐ ܗܸܫ ܡܠܵܝܵܐ ܝܼܠܵܗ'},

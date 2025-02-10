@@ -15,7 +15,7 @@
 """
 
 import unicodedata
-from typing import Tuple, Dict
+from typing import Tuple
 
 
 class SyrTools:
@@ -388,91 +388,45 @@ class SyrTools:
             self.COMBINING_DOT_ABOVE,
         )
 
-        self.rukakheh_qushayeh_ipa_map: Dict[str, str] = {
-            "ܒ݂": "v",
-            "ܓ݂": "ɣ",
-            "ܕ݂": "ð",
-            "ܟ݂": "x",
-            "ܦ݂": "f",
-            "ܦ̮": "f",
-            "ܬ݂": "θ",
-            "ܒ݁": "ܒ",
-            "ܓ݁": "g",
-            "ܕ݁": "d",
-            "ܟ݁": "k",
-            "ܦ݁": "p",
-            "ܬ݁": "t",
-        }
-
-        self.majleaneh_ipa_map: Dict[str, str] = {
-            "ܓ̰": "ʤ",
-            "ܙ̰": "ʒ",
-            "ܙ̃": "ʒ",
-            "ܟ̰": "tʃ",
-            "ܟ̃": "tʃ",
-            "ܫ̃": "ʒ",
-            "ܫ̰": "ʒ",
-        }
-
-        self.mater_lectionis_ipa_map: Dict[str, str] = {
-            "ܘܼ": "u",
-            "ܘܿ": "o",
-            "ܝܼ": "i",
-        }
-
-        self.consonant_ipa_map: Dict[str, str] = {
-            "ܐ": "ʔ",
-            self.LETTER_SUPERSCRIPT_ALAPH: "ʔ",
-            "ܒ": "b",
-            "ܓ": "g",
-            "ܔ": "ʤ",
-            "ܕ": "d",
-            "ܗ": "h",
-            "ܘ": "w",
-            "ܙ": "z",
-            "ܚ": "ḥ",
-            "ܛ": "tˤ",
-            "ܝ": "j",
-            "ܟ": "k",
-            "ܠ": "l",
-            "ܡ": "m",
-            "ܢ": "n",
-            "ܣ": "s",
-            self.LETTER_FINAL_SEMKATH: "s",
-            "ܥ": "ʕ",
-            "ܦ": "p",
-            "ܨ": "sˤ",
-            "ܩ": "q",
-            "ܪ": "r",
-            "ܖ̈": "r",
-            "ܫ": "ʃ",
-            "ܬ": "t",
-        }
-
-        self.eastern_vowel_ipa_map: Dict[str, str] = {
-            self.PTHAHA_DOTTED: "a",
-            self.ZQAPHA_DOTTED: "ɑ",
-            self.DOTTED_ZLAMA_HORIZONTAL: "ɪ",
-            self.DOTTED_ZLAMA_ANGULAR: "e",
-        }
-
-        self.western_vowel_ipa_map: Dict[str, str] = {
-            self.PTHAHA_ABOVE: "a",
-            self.PTHAHA_BELOW: "a",
-            self.ZQAPHA_ABOVE: "o",
-            self.ZQAPHA_BELOW: "o",
-            self.RBASA_ABOVE: "e",
-            self.RBASA_BELOW: "e",
-            self.HBASA_ABOVE: "ɪ",
-            self.HBASA_BELOW: "ɪ",
-            self.ESASA_ABOVE: "u",
-            self.ESASA_BELOW: "u",
-        }
-
         # Define NON_VOWEL_DIACRITICS as those diacritics that are not vowels.
         self.NON_VOWEL_DIACRITICS: Tuple[str, ...] = tuple(
             set(self.DIACRITICS) - set(self.VOWEL)
         )
+
+    def ratio(self, text: str) -> float:
+        """
+        Returns the ratio of Syriac characters to non-Syriac characters in the
+        text.
+
+        Parameters:
+            text (str): The text to calculate the ratio from.
+
+        Returns:
+            float: The ratio of Syriac in the text as a whole;
+            otherwise, 0.
+        """
+        totalCharCnt = 0
+        syrCharCnt = 0
+
+        if not self.containsSyr(text):
+            return 0
+
+        for char in text:
+            totalCharCnt += 1
+            try:
+                if (
+                    "SYRIAC" in unicodedata.name(char)
+                    or char in self.VALID_NON_CODEPOINT_SYR_CHAR
+                ):
+                    syrCharCnt += 1
+            except ValueError:
+                # Some characters don't have a Unicode name.
+                continue
+
+        if totalCharCnt == 0:
+            return 0
+
+        return syrCharCnt / totalCharCnt
 
     def isSyr(self, text: str) -> bool:
         """
@@ -511,11 +465,11 @@ class SyrTools:
             text (str): The text to examine.
 
         Returns:
-            bool: True if at least one character in the text is a Syriac letter
-                  or vowel; otherwise, False.
+            bool: True if at least one character in the text is a letter;
+            otherwise, False.
         """
         for c in text:
-            if c in self.LETTER or c in self.VOWEL:
+            if c in self.LETTER:
                 return True
         return False
 
@@ -602,3 +556,28 @@ class SyrTools:
             if c in self.NON_VOWEL_DIACRITICS:
                 return True
         return False
+
+    def remove_decorative_chars(self, text: str) -> str:
+        """
+        Remove all decorative characters from the given text.
+
+        Parameters:
+            text (str): The input Syriac text.
+
+        Returns:
+            str: The text with decorative characters removed.
+        """
+        return "".join([c for c in text if c not in self.DECORATIVE])
+
+    def remove_siyame(self, text: str) -> str:
+        """
+        Remove the combining diaeresis (used in siyame) from the text.
+
+        Parameters:
+            text (str): The input text.
+
+        Returns:
+            str: The text with the combining diaeresis removed.
+        """
+        for marking in self.SIYAMEH:
+            return text.replace(marking, "")
