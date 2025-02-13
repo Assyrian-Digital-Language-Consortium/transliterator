@@ -15,7 +15,7 @@
 """
 
 import unicodedata
-from typing import Tuple
+from typing import Dict, List, Tuple
 
 
 class SyrTools:
@@ -581,3 +581,202 @@ class SyrTools:
         """
         for marking in self.SIYAMEH:
             return text.replace(marking, "")
+
+    def get_subtoken_of_type(
+        self, token: str, set_type: Tuple[str, ...]
+    ) -> str:
+        """
+        Extract characters from 'token' that belong to the given set.
+
+        Parameters:
+            token (str): The token to search.
+            set_type (Tuple[str, ...]): A tuple of characters defining the
+            desired set.
+
+        Returns:
+            str: A substring containing only characters from set_type.
+        """
+        s: str = ""
+        for t in token:
+            if t in set_type:
+                s += t
+        return s
+
+    def tokenize_cluster(self, cluster: str) -> str:
+        """
+        Tokenize a cluster of Syriac characters into an ordered token string.
+
+        The token is constructed by extracting parts in a specific order:
+        letters, siyame, qushayeh, rukakheh, majleaneh, vowels, and qanuneh.
+
+        Parameters:
+            cluster (str): A cluster of Syriac characters.
+
+        Returns:
+            str: The tokenized representation of the cluster.
+        """
+        token_str: str = (
+            self.get_subtoken_of_type(cluster, self.LETTER)
+            + self.get_subtoken_of_type(cluster, self.SIYAMEH)
+            + self.get_subtoken_of_type(cluster, self.QUSHAYEH)
+            + self.get_subtoken_of_type(cluster, self.RUKAKHEH)
+            + self.get_subtoken_of_type(cluster, self.MAJLEANEH)
+            + self.get_subtoken_of_type(cluster, self.VOWEL)
+            + self.get_subtoken_of_type(cluster, self.QANUNEH)
+        )
+
+        if len(self.get_subtoken_of_type(cluster, self.TALQANEH)) > 0:
+            token_str = f"[{token_str}]"
+
+        return token_str
+
+    def tokenize_word(self, word: str) -> str:
+        """
+        Tokenize a Syriac word into clusters based on consonants, diacritics,
+        and vocalizations.
+
+        Parameters:
+            word (str): A Syriac word.
+
+        Returns:
+            str: The tokenized version of the word.
+        """
+        ret_tokens: str = ""
+        cluster: List[str] = [word[0]]
+        for c in word[1:]:
+            if c not in self.LETTER:
+                cluster.append(c)
+            else:
+                ret_tokens += self.tokenize_cluster("".join(cluster))
+                cluster = [c]
+        ret_tokens += self.tokenize_cluster("".join(cluster))
+        return ret_tokens
+
+    def split_syriac_text(self, text: str) -> List[str]:
+        """
+        Split Syriac text into a list of words and punctuation tokens.
+
+        Parameters:
+            text (str): The input Syriac text.
+
+        Returns:
+            List[str]: A list where each element is a word or a punctuation
+            mark.
+        """
+        result: List[str] = []
+        word: str = ""
+        for char in text:
+            if char in self.PUNCTUATION or char.isspace():
+                if word:
+                    result.append(word)
+                    word = ""
+                result.append(char)
+            else:
+                word += char
+        if word:
+            result.append(word)
+        return result
+
+    def handle_abbreviations_and_contractions(self, text: str) -> str:
+        """
+        Replace known abbreviations and contractions in the text with their
+        full forms.
+
+        Parameters:
+            text (str): The input Syriac text.
+
+        Returns:
+            str: The text with abbreviations and contractions handled.
+        """
+        eastern_replacements: List[List[str]] = [
+            ["܏ܩܛ", "ܩܲܕ݇ܡ ܛܲܗܪܵܐ"],
+            ["܏ܒܛ", "ܒܲܬ݇ܪ ܛܲܗܪܵܐ"],
+            ["ܩܫ܊", "ܩܵܫܝܼܫܵܐ"],
+        ]
+
+        if self.eastern(text):
+            for old, new in eastern_replacements:
+                text = text.replace(old, new)
+
+        text = text.replace(self.ABBREVIATION_MARK, "")
+        text = text.replace(self.CONTRACTION, "")
+        return text
+
+    def replace_punctuation(self, mark: str) -> str:
+        """
+        Replace punctuation in a token based on defined punctuation and special
+        punctuation mappings.
+
+        Parameters:
+            mark (str): The token or punctuation mark.
+
+        Returns:
+            str: The token with punctuation replaced.
+        """
+        for key in self.punctuation_replacements:
+            mark = mark.replace(key, self.punctuation_replacements[key])
+        for key in self.special_punctuation_replacements:
+            mark = mark.replace(
+                key, self.special_punctuation_replacements[key]
+            )
+        return mark
+
+    def apply_special_cases(self, word: str) -> str:
+        """
+        Apply special phonetic replacements to handle specific edge cases in
+        the word.
+
+        Parameters:
+            word (str): The input word.
+
+        Returns:
+            str: The word after special phonetic replacements.
+        """
+        special_phonetic_replacements: List[List[str]] = [
+            ["ܗ̇ܘ", "ܐܵܘܵ"],
+            ["ܗ̇ܝ", "ܐܵܝܵ"],
+            ["ܝܠܵܗ̇", "ܝܼܠܵܗ"],
+            ["ܝܠܗ̇", "ܝܼܠܵܗ"],
+            ["ܝܠܗ", "ܝܼܠܹܗ"],
+            ["ܝܠܹܗ", "ܝܼܠܹܗ"],
+            ["ܗ̇", "ܗ"],
+            ["ܡ̇ܢ", "ܡܵܢ"],
+            ["ܡ̣ܢ", "ܡܸܢ"],
+            ["ܢܲܦ̮ܫ", "ܢܲܘܫ"],
+            ["ܟܠ", "ܟܘܼܠ"],
+            ["ܟܠܢ", "ܟܘܼܠܵܢ"],
+        ]
+
+        for old, new in special_phonetic_replacements:
+            index: int = word.find(old)
+            if old in word:
+                if len(old) == len(word):
+                    word = word.replace(old, new)
+                elif len(word) >= index + len(old):
+                    if (
+                        len(word) > index + len(old)
+                        and word[index + len(old)] in self.VOWEL
+                    ):
+                        pass
+                    else:
+                        word = word.replace(old, new)
+        return word
+
+    def invert_dict(self, d: Dict[str, str]) -> Dict[str, List[str]]:
+        """
+        Invert a dictionary so that keys become values and values become keys.
+        If multiple keys map to the same value, they are grouped into a list.
+
+        Parameters:
+            d (Dict[str, str]): The dictionary to invert.
+
+        Returns:
+            Dict[str, List[str]]: The inverted dictionary.
+        """
+        inverted: Dict[str, List[str]] = {}
+        for key, value in d.items():
+            if value in inverted:
+                inverted[value].append(key)
+            else:
+                inverted[value] = [key]
+        return inverted
