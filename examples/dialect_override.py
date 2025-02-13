@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding=utf-8
+
 import sys
 import os
 
@@ -16,6 +19,7 @@ transliterator = SyrTransliterator(dialect_map_filename=iranian_koine_file)
 text = "ܒܨܲܦܪܵܐ ܟܹܐ ܟܵܬ݂ܒ݂ܹܢ ܐܸܓܪ̈ܵܬ݂ܵܐ"
 result = transliterator.transliterate(text)
 
+print("Syriac:", text)
 print("IPA:", result["ipa"])
 print("Natural IPA:", result["natural_ipa"])
 print("Romanized:", result["romanized"])
