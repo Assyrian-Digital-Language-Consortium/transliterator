@@ -15,7 +15,7 @@
 """
 
 import unicodedata
-from typing import Tuple
+from typing import Tuple, Dict
 
 
 class SyrTools:
@@ -392,6 +392,268 @@ class SyrTools:
         self.NON_VOWEL_DIACRITICS: Tuple[str, ...] = tuple(
             set(self.DIACRITICS) - set(self.VOWEL)
         )
+
+        # ---------------------------------------------------------------------
+        # Grammatical Rules
+        # ---------------------------------------------------------------------
+
+        # Define prefixes
+        self.PREFIXES: Tuple[str, ...] = (
+            self.BDOL_LETTERS,
+            self.COMPOUND_NOUN_PREFIXES,
+        )
+
+        # Define suffixes
+        self.SUFFIXES: Tuple[str, ...] = (            
+            self.PRONOMINAL_SUFFIXES,
+            self.POSSESSIVE_PARTICLE_SUFFIXES,            
+            self.FEMININE_NOUN_SUFFIXES,
+            self.ADJECTIVE_SUFFIXES,
+        )
+
+        # Possessive particle
+        self.POSSESSIVE_PARTICLE: Tuple[str, ...] = (
+            self.LETTER_DALATH + self.LETTER_YUDH, # ܕܝ
+        )
+
+        # Possessive suffixes 
+        self.PRONOMINAL_SUFFIXES: Tuple[str, ...] = (
+            # -----------------------------------------------------------------
+            # Singular 
+            # -----------------------------------------------------------------
+
+            # 1st person 
+            self.LETTER_YUDH + self.RUKKAKHA, # ܝ݂ (singular masculine and feminine)
+
+            # 2nd person
+            self.LETTER_KAPH + self.RUKKAKHA, # ܟ݂ (singular masculine)
+            self.LETTER_WAW + self.LETTER_KAPH + self.RUKKAKHA, # ܘܟ݂ (singular masculine)
+            self.LETTER_KAPH + self.RUKKAKHA + LETTER_YUDH, # ܟ݂ܝ (singular feminine)
+
+            # 3rd person
+            self.LETTER_HE, # ܗ (singular masculine)
+            self.LETTER_HE + self.COMBINING_DOT_ABOVE, # ܗ̇ (singular feminine)
+
+            # -----------------------------------------------------------------
+            # Plural
+            # -----------------------------------------------------------------
+
+            # 1st person
+            self.LETTER_NUN, # ܢ (plural)
+
+            # 2nd person
+            self.LETTER_KAPH + self.RUKKAKHA + self.LETTER_WAW + self.LETTER_NUN, # ܟ݂ܘܢ (plural masculine)
+            self.LETTER_KAPH + self.RUKKAKHA + self.LETTER_YUDH + self.LETTER_NUN, # ܟ݂ܝܢ (plural feminine)
+            self.LETTER_WAW + self.LETTER_KAPH + self.RUKKAKHA + self.LETTER_WAW + self.LETTER_NUN, # ܘܟ݂ܘܢ (plural)
+
+            # 3rd person
+            self.LETTER_WAW + self.LETTER_HE + self.LETTER_YUDH, # ܘܗܝ (plural masculine)
+            self.LETTER_WAW + self.LETTER_HE + self.COMBINING_DOT_ABOVE, # ܘܗ̇ (plural feminine)
+            self.LETTER_HE + self.LETTER_WAW + self.LETTER_NUN, # ܗܘܢ (plural masculine)
+            self.LETTER_HE + self.LETTER_YUDH + self.LETTER_NUN, # ܗܝܢ (plural feminine)
+            self.LETTER_YUDH, # ܝ (plural)        
+        )
+
+        # Possessive particle suffixes
+        self.POSSESSIVE_PARTICLE_SUFFIXES: Tuple[str, ...] = tuple(
+            set(self.POSSESSIVE_PARTICLE) + set(self.PRONOMINAL_SUFFIXES), # ܕܝ +‌ ܘܟ݂ = ܕܝܘܟ݂
+        ) 
+
+        # ---------------------------------------------------------------------
+        #  Personal pronouns and to be verbs
+        #      - Ordered on a 1:1 basis with one another
+        # ---------------------------------------------------------------------
+
+        # Personal pronouns (masculine)
+        self.PERSONAL_PRONOUNS_MASCULINE: Tuple[str, ...] = (
+            SELF.LETTER_ALAPH + SELF.LETTER_NUN + self.LETTER_ALAPH, # ܐܢܐ
+            SELF.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_TAW, # ܐܢܬ
+            SELF.LETTER_HE + SELF.COMBINING_DOT_ABOVE + SELF.LETTER_WAW, # ܗ݁ܘ
+        )
+
+        # Personal pronouns (feminine)
+        self.PERSONAL_PRONOUNS_FEMININE: Tuple[str, ...] = (
+            SELF.LETTER_ALAPH + SELF.LETTER_NUN + self.LETTER_ALAPH, # ܐܢܐ
+            SELF.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_TAW + self.LETTER_YUDH, # ܐܢܬܝ
+            SELF.LETTER_HE + SELF.COMBINING_DOT_ABOVE + SELF.LETTER_YUDH, # ܗ݁ܝ
+        )
+
+        # Personal pronouns (plural)
+        self.PERSONAL_PRONOUNS_PLURAL: Tuple[str, ...] = (
+            SELF.LETTER_ALAPH + SELF.LETTER_HETH + SELF.LETTER_NUN + self.LETTER_NUN, # ܐܚܢܢ
+            SELF.LETTER_ALAPH + SELF.LETTER_HETH + SELF.LETTER_TAW + self.LETTER_WAW + SELF.LETTER_NUN, # ܐܚܬܘܢ
+            SELF.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_YUDH, # ܐܢܝ݂            
+        )
+
+        # Demonstrative pronouns
+        self.DEMONSTRATIVE_PRONOUNS: Tuple[str, ...] = (
+            self.LETTER_ALAPH + self.LETTER_HE + self.LETTER_ALAPH, # ܐܗܐ
+            self.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_ALAPH, # ܐܢܐ
+            self.LETTER_HE + self.LETTER_NUN + self.LETTER_ALAPH, # ܗܢܐ
+            self.LETTER_HE + self.LETTER_DALATH + self.LETTER_ALAPH, # ܗܕܐ
+            self.LETTER_HE + self.LETTER_WAW, # ܗܘ
+            self.LETTER_HE + self.LETTER_YUDH, # ܗܝ
+            self.LETTER_HE + self.LETTER_LAMADH + self.LETTER_YUDH + self.LETTER_NUN, # ܗܠܝܢ
+            self.LETTER_HE + self.LETTER_NUN + self.LETTER_WAW + self.LETTER_NUN, # ܗܢܘܢ
+            self.LETTER_HE + self.LETTER_NUN + self.LETTER_YUDH + self.LETTER_NUN, # ܗܢܝܢ
+        )
+
+        self.INTERROGATIVE_PRONOUNS: Tuple[str, ...] = (
+            # Who?
+            self.LETTER_MIM + self.LETTER_NUN, # ܡܢ
+            self.LETTER_MIM + self.LETTER_NUN + self.LETTER_YUDH, # ܡܢܝ
+
+            # What?
+            self.LETTER_MIM + self.LETTER_WAW + self.LETTER_DALATH + self.LETTER_YUDH, # ܡܘܕܝ
+            self.LETTER_MIM + self.LETTER_NUN + self.LETTER_ALAPH, # ܡܢܐ
+            self.LETTER_MIM + self.LETTER_ALAPH, # ܡܐ
+
+            # Which?
+            self.LETTER_ALAPH + self.LETTER_YUDH + self.LETTER_NUN + self.LETTER_ALAPH, # ܐܝܢܐ (masculine)
+            self.LETTER_ALAPH + self.LETTER_YUDH + self.LETTER_DALATH + self.LETTER_ALAPH, # ܐܝܕܐ (feminine)
+            self.LETTER_ALAPH + self.LETTER_YUDH + self.LETTER_LAMADH + self.LETTER_ALAPH, # ܐܝܠܝܢ (plural)
+
+            # Where?
+            # FIXME: What about derived terms such as ܡܝܟܐ،‌ܠܝܟܐ، ܡܐܝܟܐ، ܟܝܠܗ?
+            self.LETTER_ALAPH + self.LETTER_YUDH + self.LETTER_KAPH + self.LETTER_ALAPH, # ܐܝܟܐ            
+
+            # When?
+            self.LETTER_ALAPH + self.LETTER_YUDH + self.LETTER_MIM + self.LETTER_NUN, # ܐܝܡܢ
+
+            # Why?
+            self.LETTER_QAPH + self.LETTER_MIM + self.LETTER_WAW + self.LETTER_DALATH + self.LETTER_YUDH, # ܩܡܘܕܝ
+
+            # How much?
+            self.LETTER_KAPH + self.LETTER_MIM + self.LETTER_ALAPH, # ܟܡܐ
+        )
+ 
+        # To be verb (masculine)
+        self.VERB_TO_BE_MASCULINE: Tuple[str, ...] = (
+            SELF.LETTER_YUDH + SELF.RUKKAKHA + SELF.LETTER_WAW + SELF.LETTER_NUN, # ܝ݂ܘܢ
+            SELF.LETTER_YUDH + SELF.RUKAKHEH + SELF.LETTER_WAW + SELF.LETTER_TAW, # ܝ݂ܘܬ
+            SELF.LETTER_YUDH + SELF.RUKAKHEH + SELF.LETTER_LAMADH + SELF.LETTER_HE, # ܝ݂ܠܗ 
+        )
+
+        # To be verb (feminine)
+        self.VERB_TO_BE_FEMININE: Tuple[str, ...] = (              
+            SELF.LETTER_YUDH + SELF.RUKKAKHA + SELF.LETTER_WAW + SELF.LETTER_NUN, # ܝ݂ܘܢ
+            SELF.LETTER_YUDH + SELF.RUKAKHEH + SELF.LETTER_WAW + SELF.LETTER_TAW + SELF.LETTER_YUDH, # ܝ݂ܘܬܝ
+            SELF.LETTER_YUDH + SELF.RUKAKHEH + SELF.LETTER_LAMADH + SELF.LETTER_HE + SELF.COMBINING_DOT_ABOVE, # ܝ݂ܠܗ̇ 
+        )
+
+        # To be verb (plural)
+        self.VERB_TO_BE_PLURAL: Tuple[str, ...] = (
+            SELF.LETTER_YUDH + SELF.LETTER_WAW + SELF.LETTER_HETH, # ܝܘܚ
+            SELF.LETTER_YUDH + SELF.LETTER_TAW + SELF.LETTER_WAW + SELF.LETTER_NUN, # ܝܬܘܢ
+            SELF.LETTER_YUDH + SELF.LETTER_NUN + SELF.LETTER_ALAPH, # ܝܢܐ 
+        )
+
+        # Compound noun prefixes (common)
+        self.COMPOUND_NOUN_PREFIXES: Tuple[str, ...] = (
+            SELF.LETTER_BETH + SELF.LETTER_DALATH, # ܒܕ
+            SELF.LETTER_BETH + SELF.LETTER_TAW + SELF.LETTER_RISH, # ܒܬܪ
+            SELF.LETTER_BETH + SELF.LETTER_YUDH + SELF.LETTER_TAW, # ܒܝܬ
+            SELF.LETTER_MIM + SELF.LETTER_RISH + SELF.LETTER_ALAPH, # ܡܪܐ
+        )
+
+        # Feminine noun suffixes
+        self.FEMININE_NOUN_SUFFIXES: Tuple[str, ...] = (
+            SELF.LETTER_TAW + SELF.LETTER_ALAPH, # ܬܐ
+            SELF.LETTER_WAW + SELF.LETTER_TAW + SELF.LETTER_ALAPH, # ܘܬܐ
+        )
+
+        # Adjective suffixes
+        self.ADJECTIVE_SUFFIXES: Tuple[str, ...] = (
+            SELF.LETTER_NUN + SELF.LETTER_ALAPH, # ܢܐ
+            SELF.LETTER_NUN + SELF.LETTER_YUDH + SELF.LETTER_ALAPH, # ܢܝܐ
+            SELF.LETTER_YUDH + SELF.LETTER_ALAPH, # ܝܐ
+        )
+
+        # Prepositions
+        self.PREPOSITIONS: Tuplr[str, ...] = (
+            # ܒܬܪ is also repeated in COMPOUND_NOUN_PREFIXES
+            SELF.LETTER_BETH + SELF.LETTER_TAW + SELF.LETTER_RISH, # ܒܬܪ
+            SELF.LETTER_GAMAL + SELF.LETTER_WAW, # ܓܘ
+            SELF.LETTER_HE + SELF.LETTER_LAMADH, # ܗܠ
+            SELF.LETTER_MIM + SELF.LETTER_NUN, # ܡܢ
+            SELF.LETTER_E + SELF.LETTER_LAMADH, # ܥܠ
+            SELF.LETTER_E + SELF.LETTER_MIM, #  ܥܡ
+            SELF.LETTER_QAPH + SELF.LETTER_ALAPH, # ܩܐ
+            SELF.LETTER_QAPH + SELF.LETTER_DALATH + SELF.LETTER_MIM, # ܩܕܡ
+            SELF.LETTER_TAW + SELF.LETTER_HETH + SELF.LETTER_WAW + SELF.LETTER_TAW, # ܬܚܘܬ
+
+            # These prepositions with pronominal suffixes can be used without the particle ܕ,
+            # while the last ܐ and vowel point of the penultimate letter are omitted
+            #
+            # FIXME: How do we check for this using mechanistic rules? Possibly a regular
+            # expression?
+            # ܡܢ ܕܦܢܐ ܕ، ܚܕܪܘܢܐ ܕ، ܒܪܩܘܒܟ ܕ            
+        )
+
+        # Preposition an be joined with pronominal suffixes
+        self.PREPOSITIONS_WITH_PRONOMINAL_SUFFIXES: Tuple[str, ...] = (
+            set(self.PREPOSITIONS) + set(self.PRONOMINAL_SUFFIXES),
+        )
+
+        # ---------------------------------------------------------------------
+        # VERBS GROUPS
+        # ---------------------------------------------------------------------        
+
+        # The letters ܐ ܘ ܝ  are considered weak letters (ܐܵܬܘܵܬܸ̈ܐ ܟܪ̈ܝ݂ܗܸܐ) because, in some positions, 
+        # they are substituted, not pronounced, or are dropped completely.
+        #
+        # Roots of verbs without weak letters are called ܫܲܠܡܸ̈ܐ
+        self.ROOT_WEAK_LETTERS: Tuple[str, ...] = (
+            SELF.LETTER_ALAPH,
+            SELF.LETTER_YUDH,
+            SELF.LETTER_WAW,
+        )
+
+        # Pa'el = ܦܵܥܸܠ
+        #   1. Verbal roots without ܐ ܘ ܝ as the 2nd or 3rd letters
+        #   2. Verbal roots with ܐ as the 2nd letter
+        #   3. Verbal roots with ܐ as the 3rd letter
+
+
+    def normalize(self, text: str) -> str:
+        """
+        Normalize the word by removing diacritics
+
+        Parameters:
+            text (str): The word to normalize.
+
+        Returns:
+            str: The normalized representation of the word.
+        """
+        # Remove decoratives
+        text = "".join([c for c in text if c not in self.DECORATIVE])
+        # Remove diacritics
+        text = "".join([c for c in text if c not in self.DIACRITICS])
+        # Remove diaresis/siyameh
+        text = "".join([c for c in text if c not in self.SIYAMEH])
+        return text
+
+    def remove_bdol_prefixes(self, text: str) -> str:
+        """
+        Check to see if the word contains BDOL and if it does remove the prefix
+        and return the word without the BDOL        
+
+        Parameters:
+            text (str): The word that will need to be checked. 
+
+        Returns:
+            str: The word without the BDOL.
+        """
+        # 1. Is the first character of the word a BDOL letter?
+        for c in text[:1]:
+            if c in self.BDOL_LETTERS:
+                # 2. Is the rest of the word after the BDOL at least a tri-constant root?
+                if len(text[2:]) > 3:
+                    # 3. Return the word without the BDOL
+                    text = text[:1]
+        return text
+
+
 
     def ratio(self, text: str) -> float:
         """
