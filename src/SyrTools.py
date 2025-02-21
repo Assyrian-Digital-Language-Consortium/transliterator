@@ -565,7 +565,7 @@ class SyrTools:
         # Adjective suffixes
         self.ADJECTIVE_SUFFIXES: Tuple[str, ...] = (
             SELF.LETTER_NUN + SELF.LETTER_ALAPH, # ܢܐ
-            SELF.LETTER_NUN + SELF.LETTER_YUDH + SELF.LETTER_ALAPH, # ܢܝܐ
+            SELF.LETTER_NUN + SELF.LETTER_YUDH + SELF.LETTER_ALAPH, # ܢܝـܐ
             SELF.LETTER_YUDH + SELF.LETTER_ALAPH, # ܝܐ
         )
 
@@ -613,6 +613,7 @@ class SyrTools:
         #   1. Verbal roots without ܐ ܘ ܝ as the 2nd or 3rd letters
         #   2. Verbal roots with ܐ as the 2nd letter
         #   3. Verbal roots with ܐ as the 3rd letter
+
 
 
     def normalize(self, text: str) -> str:
