@@ -15,12 +15,7 @@
 """
 
 import unicodedata
-<<<<<<< HEAD
-from typing import Tuple, Dict
-=======
 from typing import Dict, List, Tuple
->>>>>>> move_functions
-
 
 class SyrTools:
     """

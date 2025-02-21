@@ -35,3 +35,5 @@ class SyrStemmer:
     """
     A class for providing a rudimentary stemmer
     """
+
+    
