@@ -15,18 +15,23 @@
     ' @copyright Assyrian Digital Language Consortium 
 """
 
-"""
-    ' Algorithm Flowchart
-    '
-    ' Step 1. Tokenization
-    ' Step 2. Normalization
-    ' Step 3. Removal of BDOL prefixes
-"""
-
 import unicodedata
 import re
 
 from typing import Tuple, Dict, List
 from SyrTools import SyrTools
 
-text = "ܠܲܚܡܵܐ ܠܡܕ݂ܝܼܢ݇ܬܵܐ ܒܕܸܡܵܐ ܒܘܼܡܵܐ ܘܲܪܕܵܐ ܘܟܬ݂ܵܒ݂ܵܐ ܒܘܼܫܠܵܐ ܒܲܫܘܼܠܲܢ ܠܸܥܙܵܐ ܘܟܲܪܥܵܐ ܕܐܵܗܵܐ ܕܟܘܼܪܣܝܵܐ ܒܘܼܫܵܠܵܐ ܠܵܒܸܫ"
+# text = "ܠܲܚܡܵܐ ܠܡܕ݂ܝܼܢ݇ܬܵܐ ܒܕܸܡܵܐ ܒܘܼܡܵܐ ܘܲܪܕܵܐ ܘܟܬ݂ܵܒ݂ܵܐ ܒܘܼܫܠܵܐ ܒܲܫܘܼܠܲܢ ܠܸܥܙܵܐ ܘܟܲܪܥܵܐ ܕܐܵܗܵܐ ܕܟܘܼܪܣܝܵܐ ܒܘܼܫܵܠܵܐ ܠܵܒܸܫ"
+
+sample = "ܒܲܢܵܝܵܐ ܒܢܝܼܬ݂ܵܐ ܒܵܢܘܿܝܬܵܐ"
+
+# Algorithm Flowchart
+# -----------------------------------------------------------------------------   
+# Step 1. Tokenization
+# Step 2. Normalization
+# Step 3. Removal of BDOL prefixes
+
+class SyrStemmer:
+    """
+    A class for providing a rudimentary stemmer
+    """
