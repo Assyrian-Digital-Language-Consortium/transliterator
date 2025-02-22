@@ -396,20 +396,6 @@ class SyrTools:
         # Grammatical Rules
         # ---------------------------------------------------------------------
 
-        # Define prefixes
-        self.PREFIXES: Tuple[str, ...] = (
-            self.BDOL_LETTERS,
-            self.COMPOUND_NOUN_PREFIXES,
-        )
-
-        # Define suffixes
-        self.SUFFIXES: Tuple[str, ...] = (            
-            self.PRONOMINAL_SUFFIXES,
-            self.POSSESSIVE_PARTICLE_SUFFIXES,            
-            self.FEMININE_NOUN_SUFFIXES,
-            self.ADJECTIVE_SUFFIXES,
-        )
-
         # Possessive particle
         self.POSSESSIVE_PARTICLE: Tuple[str, ...] = (
             self.LETTER_DALATH + self.LETTER_YUDH, # ܕܝ
@@ -427,7 +413,7 @@ class SyrTools:
             # 2nd person
             self.LETTER_KAPH + self.RUKKAKHA, # ܟ݂ (singular masculine)
             self.LETTER_WAW + self.LETTER_KAPH + self.RUKKAKHA, # ܘܟ݂ (singular masculine)
-            self.LETTER_KAPH + self.RUKKAKHA + LETTER_YUDH, # ܟ݂ܝ (singular feminine)
+            self.LETTER_KAPH + self.RUKKAKHA + self.LETTER_YUDH, # ܟ݂ܝ (singular feminine)
 
             # 3rd person
             self.LETTER_HE, # ܗ (singular masculine)
@@ -454,9 +440,11 @@ class SyrTools:
         )
 
         # Possessive particle suffixes
-        self.POSSESSIVE_PARTICLE_SUFFIXES: Tuple[str, ...] = tuple(
-            set(self.POSSESSIVE_PARTICLE) + set(self.PRONOMINAL_SUFFIXES), # ܕܝ +‌ ܘܟ݂ = ܕܝܘܟ݂
-        ) 
+        self.POSSESSIVE_PARTICLE_SUFFIXES = tuple(
+            # ܕܝ +‌ ܘܟ݂ = ܕܝܘܟ݂
+            str(self.POSSESSIVE_PARTICLE) + str(suffix) 
+            for suffix in self.PRONOMINAL_SUFFIXES
+        )
 
         # ---------------------------------------------------------------------
         #  Personal pronouns and to be verbs
@@ -465,23 +453,23 @@ class SyrTools:
 
         # Personal pronouns (masculine)
         self.PERSONAL_PRONOUNS_MASCULINE: Tuple[str, ...] = (
-            SELF.LETTER_ALAPH + SELF.LETTER_NUN + self.LETTER_ALAPH, # ܐܢܐ
-            SELF.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_TAW, # ܐܢܬ
-            SELF.LETTER_HE + SELF.COMBINING_DOT_ABOVE + SELF.LETTER_WAW, # ܗ݁ܘ
+            self.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_ALAPH, # ܐܢܐ
+            self.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_TAW, # ܐܢܬ
+            self.LETTER_HE + self.COMBINING_DOT_ABOVE + self.LETTER_WAW, # ܗ݁ܘ
         )
 
         # Personal pronouns (feminine)
         self.PERSONAL_PRONOUNS_FEMININE: Tuple[str, ...] = (
-            SELF.LETTER_ALAPH + SELF.LETTER_NUN + self.LETTER_ALAPH, # ܐܢܐ
-            SELF.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_TAW + self.LETTER_YUDH, # ܐܢܬܝ
-            SELF.LETTER_HE + SELF.COMBINING_DOT_ABOVE + SELF.LETTER_YUDH, # ܗ݁ܝ
+            self.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_ALAPH, # ܐܢܐ
+            self.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_TAW + self.LETTER_YUDH, # ܐܢܬܝ
+            self.LETTER_HE + self.COMBINING_DOT_ABOVE + self.LETTER_YUDH, # ܗ݁ܝ
         )
 
         # Personal pronouns (plural)
         self.PERSONAL_PRONOUNS_PLURAL: Tuple[str, ...] = (
-            SELF.LETTER_ALAPH + SELF.LETTER_HETH + SELF.LETTER_NUN + self.LETTER_NUN, # ܐܚܢܢ
-            SELF.LETTER_ALAPH + SELF.LETTER_HETH + SELF.LETTER_TAW + self.LETTER_WAW + SELF.LETTER_NUN, # ܐܚܬܘܢ
-            SELF.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_YUDH, # ܐܢܝ݂            
+            self.LETTER_ALAPH + self.LETTER_HETH + self.LETTER_NUN + self.LETTER_NUN, # ܐܚܢܢ
+            self.LETTER_ALAPH + self.LETTER_HETH + self.LETTER_TAW + self.LETTER_WAW + self.LETTER_NUN, # ܐܚܬܘܢ
+            self.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_YUDH, # ܐܢܝ݂            
         )
 
         # Demonstrative pronouns
@@ -528,58 +516,58 @@ class SyrTools:
  
         # To be verb (masculine)
         self.VERB_TO_BE_MASCULINE: Tuple[str, ...] = (
-            SELF.LETTER_YUDH + SELF.RUKKAKHA + SELF.LETTER_WAW + SELF.LETTER_NUN, # ܝ݂ܘܢ
-            SELF.LETTER_YUDH + SELF.RUKAKHEH + SELF.LETTER_WAW + SELF.LETTER_TAW, # ܝ݂ܘܬ
-            SELF.LETTER_YUDH + SELF.RUKAKHEH + SELF.LETTER_LAMADH + SELF.LETTER_HE, # ܝ݂ܠܗ 
+            self.LETTER_YUDH + self.RUKKAKHA + self.LETTER_WAW + self.LETTER_NUN, # ܝ݂ܘܢ
+            self.LETTER_YUDH + self.RUKKAKHA + self.LETTER_WAW + self.LETTER_TAW, # ܝ݂ܘܬ
+            self.LETTER_YUDH + self.RUKKAKHA + self.LETTER_LAMADH + self.LETTER_HE, # ܝ݂ܠܗ 
         )
 
         # To be verb (feminine)
         self.VERB_TO_BE_FEMININE: Tuple[str, ...] = (              
-            SELF.LETTER_YUDH + SELF.RUKKAKHA + SELF.LETTER_WAW + SELF.LETTER_NUN, # ܝ݂ܘܢ
-            SELF.LETTER_YUDH + SELF.RUKAKHEH + SELF.LETTER_WAW + SELF.LETTER_TAW + SELF.LETTER_YUDH, # ܝ݂ܘܬܝ
-            SELF.LETTER_YUDH + SELF.RUKAKHEH + SELF.LETTER_LAMADH + SELF.LETTER_HE + SELF.COMBINING_DOT_ABOVE, # ܝ݂ܠܗ̇ 
+            self.LETTER_YUDH + self.RUKKAKHA + self.LETTER_WAW + self.LETTER_NUN, # ܝ݂ܘܢ
+            self.LETTER_YUDH + self.RUKKAKHA + self.LETTER_WAW + self.LETTER_TAW + self.LETTER_YUDH, # ܝ݂ܘܬܝ
+            self.LETTER_YUDH + self.RUKKAKHA + self.LETTER_LAMADH + self.LETTER_HE + self.COMBINING_DOT_ABOVE, # ܝ݂ܠܗ̇ 
         )
 
         # To be verb (plural)
         self.VERB_TO_BE_PLURAL: Tuple[str, ...] = (
-            SELF.LETTER_YUDH + SELF.LETTER_WAW + SELF.LETTER_HETH, # ܝܘܚ
-            SELF.LETTER_YUDH + SELF.LETTER_TAW + SELF.LETTER_WAW + SELF.LETTER_NUN, # ܝܬܘܢ
-            SELF.LETTER_YUDH + SELF.LETTER_NUN + SELF.LETTER_ALAPH, # ܝܢܐ 
+            self.LETTER_YUDH + self.LETTER_WAW + self.LETTER_HETH, # ܝܘܚ
+            self.LETTER_YUDH + self.LETTER_TAW + self.LETTER_WAW + self.LETTER_NUN, # ܝܬܘܢ
+            self.LETTER_YUDH + self.LETTER_NUN + self.LETTER_ALAPH, # ܝܢܐ 
         )
 
         # Compound noun prefixes (common)
         self.COMPOUND_NOUN_PREFIXES: Tuple[str, ...] = (
-            SELF.LETTER_BETH + SELF.LETTER_DALATH, # ܒܕ
-            SELF.LETTER_BETH + SELF.LETTER_TAW + SELF.LETTER_RISH, # ܒܬܪ
-            SELF.LETTER_BETH + SELF.LETTER_YUDH + SELF.LETTER_TAW, # ܒܝܬ
-            SELF.LETTER_MIM + SELF.LETTER_RISH + SELF.LETTER_ALAPH, # ܡܪܐ
+            self.LETTER_BETH + self.LETTER_DALATH, # ܒܕ
+            self.LETTER_BETH + self.LETTER_TAW + self.LETTER_RISH, # ܒܬܪ
+            self.LETTER_BETH + self.LETTER_YUDH + self.LETTER_TAW, # ܒܝܬ
+            self.LETTER_MIM + self.LETTER_RISH + self.LETTER_ALAPH, # ܡܪܐ
         )
 
         # Feminine noun suffixes
         self.FEMININE_NOUN_SUFFIXES: Tuple[str, ...] = (
-            SELF.LETTER_TAW + SELF.LETTER_ALAPH, # ܬܐ
-            SELF.LETTER_WAW + SELF.LETTER_TAW + SELF.LETTER_ALAPH, # ܘܬܐ
+            self.LETTER_TAW + self.LETTER_ALAPH, # ܬܐ
+            self.LETTER_WAW + self.LETTER_TAW + self.LETTER_ALAPH, # ܘܬܐ
         )
 
         # Adjective suffixes
         self.ADJECTIVE_SUFFIXES: Tuple[str, ...] = (
-            SELF.LETTER_NUN + SELF.LETTER_ALAPH, # ܢܐ
-            SELF.LETTER_NUN + SELF.LETTER_YUDH + SELF.LETTER_ALAPH, # ܢܝـܐ
-            SELF.LETTER_YUDH + SELF.LETTER_ALAPH, # ܝܐ
+            self.LETTER_NUN + self.LETTER_ALAPH, # ܢܐ
+            self.LETTER_NUN + self.LETTER_YUDH + self.LETTER_ALAPH, # ܢܝـܐ
+            self.LETTER_YUDH + self.LETTER_ALAPH, # ܝܐ
         )
 
         # Prepositions
-        self.PREPOSITIONS: Tuplr[str, ...] = (
+        self.PREPOSITIONS: Tuple[str, ...] = (
             # ܒܬܪ is also repeated in COMPOUND_NOUN_PREFIXES
-            SELF.LETTER_BETH + SELF.LETTER_TAW + SELF.LETTER_RISH, # ܒܬܪ
-            SELF.LETTER_GAMAL + SELF.LETTER_WAW, # ܓܘ
-            SELF.LETTER_HE + SELF.LETTER_LAMADH, # ܗܠ
-            SELF.LETTER_MIM + SELF.LETTER_NUN, # ܡܢ
-            SELF.LETTER_E + SELF.LETTER_LAMADH, # ܥܠ
-            SELF.LETTER_E + SELF.LETTER_MIM, #  ܥܡ
-            SELF.LETTER_QAPH + SELF.LETTER_ALAPH, # ܩܐ
-            SELF.LETTER_QAPH + SELF.LETTER_DALATH + SELF.LETTER_MIM, # ܩܕܡ
-            SELF.LETTER_TAW + SELF.LETTER_HETH + SELF.LETTER_WAW + SELF.LETTER_TAW, # ܬܚܘܬ
+            self.LETTER_BETH + self.LETTER_TAW + self.LETTER_RISH, # ܒܬܪ
+            self.LETTER_GAMAL + self.LETTER_WAW, # ܓܘ
+            self.LETTER_HE + self.LETTER_LAMADH, # ܗܠ
+            self.LETTER_MIM + self.LETTER_NUN, # ܡܢ
+            self.LETTER_E + self.LETTER_LAMADH, # ܥܠ
+            self.LETTER_E + self.LETTER_MIM, #  ܥܡ
+            self.LETTER_QAPH + self.LETTER_ALAPH, # ܩܐ
+            self.LETTER_QAPH + self.LETTER_DALATH + self.LETTER_MIM, # ܩܕܡ
+            self.LETTER_TAW + self.LETTER_HETH + self.LETTER_WAW + self.LETTER_TAW, # ܬܚܘܬ
 
             # These prepositions with pronominal suffixes can be used without the particle ܕ,
             # while the last ܐ and vowel point of the penultimate letter are omitted
@@ -590,30 +578,35 @@ class SyrTools:
         )
 
         # Preposition an be joined with pronominal suffixes
-        self.PREPOSITIONS_WITH_PRONOMINAL_SUFFIXES: Tuple[str, ...] = (
-            set(self.PREPOSITIONS) + set(self.PRONOMINAL_SUFFIXES),
+        self.PREPOSITIONS_WITH_PRONOMINAL_SUFFIXES = tuple(
+            str(self.PREPOSITIONS) + str(suffix)            
+            for suffix in self.PRONOMINAL_SUFFIXES       
         )
 
-        # ---------------------------------------------------------------------
-        # VERBS GROUPS
-        # ---------------------------------------------------------------------        
+         # Define prefixes
+        self.PREFIXES: Tuple[str, ...] = (
+            self.BDOL_LETTERS,
+            self.COMPOUND_NOUN_PREFIXES,
+        )
 
+        # Define suffixes
+        self.SUFFIXES: Tuple[str, ...] = (            
+            self.PRONOMINAL_SUFFIXES,
+            self.POSSESSIVE_PARTICLE_SUFFIXES,            
+            self.FEMININE_NOUN_SUFFIXES,
+            self.ADJECTIVE_SUFFIXES,
+            self.LETTER_ALAPH,            
+        )
+    
         # The letters ܐ ܘ ܝ  are considered weak letters (ܐܵܬܘܵܬܸ̈ܐ ܟܪ̈ܝ݂ܗܸܐ) because, in some positions, 
         # they are substituted, not pronounced, or are dropped completely.
         #
         # Roots of verbs without weak letters are called ܫܲܠܡܸ̈ܐ
         self.ROOT_WEAK_LETTERS: Tuple[str, ...] = (
-            SELF.LETTER_ALAPH,
-            SELF.LETTER_YUDH,
-            SELF.LETTER_WAW,
+            self.LETTER_ALAPH,
+            self.LETTER_YUDH,
+            self.LETTER_WAW,
         )
-
-        # Pa'el = ܦܵܥܸܠ
-        #   1. Verbal roots without ܐ ܘ ܝ as the 2nd or 3rd letters
-        #   2. Verbal roots with ܐ as the 2nd letter
-        #   3. Verbal roots with ܐ as the 3rd letter
-
-
 
     def normalize(self, text: str) -> str:
         """
@@ -652,8 +645,6 @@ class SyrTools:
                     # 3. Return the word without the BDOL
                     text = text[:1]
         return text
-
-
 
     def ratio(self, text: str) -> float:
         """
@@ -935,8 +926,8 @@ class SyrTools:
                 result.append(char)
             else:
                 word += char
-        if word:
-            result.append(word)
+        if word:        
+            result.append(word)        
         return result
 
     def handle_abbreviations_and_contractions(self, text: str) -> str:
