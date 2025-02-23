@@ -60,14 +60,16 @@ class SyrStemmer:
         self.syrtools = SyrTools()
         self.normalize = self.syrtools.normalize
         self.punctuation = self.syrtools.PUNCTUATION
-        self.suffixes = self.syrtools.SUFFIXES        
+        self.suffixes = self.syrtools.SUFFIXES
+        self.verb_to_be = self.syrtools.VERB_TO_BE
+        self.personal_pronouns = self.syrtools.PERSONAL_PRONOUNS        
 
     def tokenize_words(self, words:str, punctuation) -> List[str]:
         """
         Tokenize Syriac words into a word list
 
         Parameters:
-            words (str): Syriac
+            words (str): Syriac word
 
         Returns:
             str: The tokenized version of the word.
@@ -90,12 +92,32 @@ class SyrStemmer:
 
         return result
 
+    def remove_tense(self, word:str, group:str) -> str:
+        """
+        Remove specified tense from tokenized words
+
+        Parameters:
+            word (str): Tokenized Syriac word
+
+        Returns:
+            str: Emtpy string if it matches the grouping
+        """
+        # Create list of the combined masculine, feminine, and plural 'to be' verbs
+        tenses = sorted(list(group), key=len, reverse=True)
+
+        for tense in tenses:            
+            if word.endswith(tense):
+                logger.info(f"[*] Matching: {tense}. Word dropped.\n")
+                return ""
+        
+        return word
+
     def remove_suffixes(self, word:str) -> str:
         """
         Remove the suffixes from the word
 
         Parameters:
-            word (str): Tokenize Syriac word
+            word (str): Tokenized Syriac word
         
         Returns:
             str: Suffix-less Syriac word
@@ -125,17 +147,13 @@ class SyrStemmer:
         # 1. Original word is shorter than min_stem_length
         # 2. Longest suffix doesn't match
         # 3. Removing suffix would make word too short
-        return word
-    
+        return word    
+
     def apply_infinitive_rules(self, word:str) -> str:
         """
         Apply the infinitive verb rules to the word after the word has been
         normalized and within the remove_suffixes function
         """
-
-        # ---------------------------------------------------------------------
-        # VERBS GROUPS
-        # ---------------------------------------------------------------------        
 
         # Pa'el = ܦܵܥܸܠ = Infinitive
         #   1. Verbal roots without ܐ ܘ ܝ as the 2nd or 3rd letters
@@ -156,6 +174,14 @@ class SyrStemmer:
             logger.info(f"    Infinitive: {word} -> {word_infinitive}")
             return word_infinitive
 
+    def apply_present_tense_rules(self, word:str) -> str:
+        """
+        Apply the present continuous verb rules to the word after the word has been
+        normalized and within the remove_suffixes function
+        """
+
+        # P
+
     def stem(self, text: str) -> str:
         """
         Stem the Syriac words using mechanistic rules
@@ -171,9 +197,13 @@ class SyrStemmer:
         for word in words:
             logger.info(f"Word: {word}")
             vocalized_word = word
-            unvocalized_word = self.normalize(word)            
-            word = self.remove_suffixes(unvocalized_word)
-            logger.info(f"Processing input data: {vocalized_word} ← {unvocalized_word} ← {word}\n")
+            unvocalized_word = self.normalize(word)
+            processed_word = self.remove_tense(unvocalized_word, self.verb_to_be)
+            processed_word = self.remove_tense(processed_word, self.personal_pronouns)
+            
+            if processed_word:
+                word = self.remove_suffixes(processed_word)
+                logger.info(f"Processing input data: {vocalized_word} ← {unvocalized_word} ← {word}\n")
 
 if __name__ == "__main__":
 
@@ -183,7 +213,8 @@ if __name__ == "__main__":
     wordlist = [
         #'ܫܸܡܵܐ ܒܪܝܼܟ݂ܵܐ ܩܐ ܒܪܝܼܟ݂ܵܐ ܢܵܫܵܐ',
         #'ܐܵܢܵܐ ܒܢܸܠܗ ܚܕ ܒܲܝܬܸܐ ܚܕܲܬܸܐ،ܒܵܢܸܐ،ܒܵܢܘܿܝܬܵܐ،‌ܒܢܝܼܬ݂ܵܐ،ܒܲܢܵܝܵܐ،ܒܢܸܠܘܟ',
-        "ܒܵܢܝܼܬ݂ܵܐ،ܒܵܢܸܐ،ܚܕܲܬܵܐ،‌ܒܲܢܵܝܵܐ،ܕܝܵܪܵܐ،ܩܝܵܡܵܐ،ܚܝܵܝܵܐ،ܗܘܵܝܵܐ،ܚܝܵܛܵܐ"
+        "ܒܵܢܝܼܬ݂ܵܐ،ܒܵܢܸܐ،ܚܕܲܬܵܐ،‌ܒܲܢܵܝܵܐ،ܕܝܵܪܵܐ،ܩܝܵܡܵܐ،ܚܝܵܝܵܐ،ܗܘܵܝܵܐ،ܚܝܵܛܵܐ",
+        "ܐܵܢܵܐ ܒܸܟܬܵܒ݂ܵܐ ܝܘܸܢ،ܗܘ ܒܵܩܝܵܡܵܐ ܝܠܸܗ،ܐܲܢܬ̄ ܒܸܒܢܵܝܵܐ ܝܘܲܬܝ،"
     ]
 
     Stemmer = SyrStemmer()

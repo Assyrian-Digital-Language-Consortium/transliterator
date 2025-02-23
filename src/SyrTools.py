@@ -408,12 +408,12 @@ class SyrTools:
             # -----------------------------------------------------------------
 
             # 1st person 
-            self.LETTER_YUDH + self.RUKKAKHA, # ܝ݂ (singular masculine and feminine)
+            self.LETTER_YUDH, # ܝ݂ (singular masculine and feminine)
 
             # 2nd person
-            self.LETTER_KAPH + self.RUKKAKHA, # ܟ݂ (singular masculine)
-            self.LETTER_WAW + self.LETTER_KAPH + self.RUKKAKHA, # ܘܟ݂ (singular masculine)
-            self.LETTER_KAPH + self.RUKKAKHA + self.LETTER_YUDH, # ܟ݂ܝ (singular feminine)
+            self.LETTER_KAPH, # ܟ݂ (singular masculine)
+            self.LETTER_WAW + self.LETTER_KAPH, # ܘܟ݂ (singular masculine)
+            self.LETTER_KAPH + self.LETTER_YUDH, # ܟ݂ܝ (singular feminine)
 
             # 3rd person
             self.LETTER_HE, # ܗ (singular masculine)
@@ -427,13 +427,13 @@ class SyrTools:
             self.LETTER_NUN, # ܢ (plural)
 
             # 2nd person
-            self.LETTER_KAPH + self.RUKKAKHA + self.LETTER_WAW + self.LETTER_NUN, # ܟ݂ܘܢ (plural masculine)
+            self.LETTER_KAPH + self.LETTER_WAW + self.LETTER_NUN, # ܟ݂ܘܢ (plural masculine)
             self.LETTER_KAPH + self.RUKKAKHA + self.LETTER_YUDH + self.LETTER_NUN, # ܟ݂ܝܢ (plural feminine)
-            self.LETTER_WAW + self.LETTER_KAPH + self.RUKKAKHA + self.LETTER_WAW + self.LETTER_NUN, # ܘܟ݂ܘܢ (plural)
+            self.LETTER_WAW + self.LETTER_KAPH + self.LETTER_WAW + self.LETTER_NUN, # ܘܟ݂ܘܢ (plural)
 
             # 3rd person
             self.LETTER_WAW + self.LETTER_HE + self.LETTER_YUDH, # ܘܗܝ (plural masculine)
-            self.LETTER_WAW + self.LETTER_HE + self.COMBINING_DOT_ABOVE, # ܘܗ̇ (plural feminine)
+            self.LETTER_WAW + self.LETTER_HE, # ܘܗ̇ (plural feminine)
             self.LETTER_HE + self.LETTER_WAW + self.LETTER_NUN, # ܗܘܢ (plural masculine)
             self.LETTER_HE + self.LETTER_YUDH + self.LETTER_NUN, # ܗܝܢ (plural feminine)
             self.LETTER_YUDH, # ܝ (plural)        
@@ -455,14 +455,14 @@ class SyrTools:
         self.PERSONAL_PRONOUNS_MASCULINE: Tuple[str, ...] = (
             self.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_ALAPH, # ܐܢܐ
             self.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_TAW, # ܐܢܬ
-            self.LETTER_HE + self.COMBINING_DOT_ABOVE + self.LETTER_WAW, # ܗ݁ܘ
+            self.LETTER_HE + self.LETTER_WAW, # ܗ݁ܘ
         )
 
         # Personal pronouns (feminine)
         self.PERSONAL_PRONOUNS_FEMININE: Tuple[str, ...] = (
             self.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_ALAPH, # ܐܢܐ
             self.LETTER_ALAPH + self.LETTER_NUN + self.LETTER_TAW + self.LETTER_YUDH, # ܐܢܬܝ
-            self.LETTER_HE + self.COMBINING_DOT_ABOVE + self.LETTER_YUDH, # ܗ݁ܝ
+            self.LETTER_HE + self.LETTER_YUDH, # ܗ݁ܝ
         )
 
         # Personal pronouns (plural)
@@ -516,16 +516,16 @@ class SyrTools:
  
         # To be verb (masculine)
         self.VERB_TO_BE_MASCULINE: Tuple[str, ...] = (
-            self.LETTER_YUDH + self.RUKKAKHA + self.LETTER_WAW + self.LETTER_NUN, # ܝ݂ܘܢ
-            self.LETTER_YUDH + self.RUKKAKHA + self.LETTER_WAW + self.LETTER_TAW, # ܝ݂ܘܬ
-            self.LETTER_YUDH + self.RUKKAKHA + self.LETTER_LAMADH + self.LETTER_HE, # ܝ݂ܠܗ 
+            self.LETTER_YUDH + self.LETTER_WAW + self.LETTER_NUN, # ܝ݂ܘܢ
+            self.LETTER_YUDH + self.LETTER_WAW + self.LETTER_TAW, # ܝ݂ܘܬ
+            self.LETTER_YUDH + self.LETTER_LAMADH + self.LETTER_HE, # ܝ݂ܠܗ 
         )
 
         # To be verb (feminine)
         self.VERB_TO_BE_FEMININE: Tuple[str, ...] = (              
-            self.LETTER_YUDH + self.RUKKAKHA + self.LETTER_WAW + self.LETTER_NUN, # ܝ݂ܘܢ
-            self.LETTER_YUDH + self.RUKKAKHA + self.LETTER_WAW + self.LETTER_TAW + self.LETTER_YUDH, # ܝ݂ܘܬܝ
-            self.LETTER_YUDH + self.RUKKAKHA + self.LETTER_LAMADH + self.LETTER_HE + self.COMBINING_DOT_ABOVE, # ܝ݂ܠܗ̇ 
+            self.LETTER_YUDH + self.LETTER_WAW + self.LETTER_NUN, # ܝ݂ܘܢ
+            self.LETTER_YUDH + self.LETTER_WAW + self.LETTER_TAW + self.LETTER_YUDH, # ܝ݂ܘܬܝ
+            self.LETTER_YUDH + self.LETTER_LAMADH + self.LETTER_HE, # ܝ݂ܠܗ̇ 
         )
 
         # To be verb (plural)
@@ -596,6 +596,20 @@ class SyrTools:
             self.FEMININE_NOUN_SUFFIXES,
             self.ADJECTIVE_SUFFIXES,
             self.LETTER_ALAPH,            
+        )
+
+        # Define the verb 'to be'
+        self.VERB_TO_BE: Tuple[str, ...] = (
+            self.VERB_TO_BE_FEMININE,
+            self.VERB_TO_BE_MASCULINE,
+            self.VERB_TO_BE_PLURAL,
+        )
+
+        # Define personal pronouns
+        self.PERSONAL_PRONOUNS: Tuple[str, ...] = (
+            self.PERSONAL_PRONOUNS_FEMININE,
+            self.PERSONAL_PRONOUNS_MASCULINE,
+            self.PERSONAL_PRONOUNS_PLURAL,
         )
     
         # The letters ܐ ܘ ܝ  are considered weak letters (ܐܵܬܘܵܬܸ̈ܐ ܟܪ̈ܝ݂ܗܸܐ) because, in some positions, 
