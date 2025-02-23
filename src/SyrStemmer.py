@@ -62,7 +62,8 @@ class SyrStemmer:
         self.punctuation = self.syrtools.PUNCTUATION
         self.suffixes = self.syrtools.SUFFIXES
         self.verb_to_be = self.syrtools.VERB_TO_BE
-        self.personal_pronouns = self.syrtools.PERSONAL_PRONOUNS        
+        self.personal_pronouns = self.syrtools.PERSONAL_PRONOUNS     
+        self.bdol_letters = self.syrtools.BDOL_LETTERS   
 
     def tokenize_words(self, words:str, punctuation) -> List[str]:
         """
@@ -92,7 +93,7 @@ class SyrStemmer:
 
         return result
 
-    def remove_tense(self, word:str, group:str) -> str:
+    def remove_tense(self, word:str, group:str, label:str) -> str:
         """
         Remove specified tense from tokenized words
 
@@ -107,9 +108,31 @@ class SyrStemmer:
 
         for tense in tenses:            
             if word.endswith(tense):
-                logger.info(f"[*] Matching: {tense}. Word dropped.\n")
+                logger.info(f"[*] Matching {label}: {tense}. Word dropped.")
                 return ""
         
+        return word
+
+    def remove_bdol_letters(self, word:str) -> str:
+        """
+        Does the tokenized word contains a BDOL letter? If so, remove it
+
+        Parameters:
+            word (str): Tokenized Syriac word
+        
+        Returns:
+            str: BDOL-less Syriac word
+        """
+                
+        # Naive interpretation focusing on ܒ for now
+        if word and word[0] in self.syrtools.LETTER_BETH:
+            logger.info(f"[*] Matching BDOL letter {word[0]} in {word}")
+            # Remove first letter and check remaining length
+            remaining = word[1:]
+            if len(remaining) >= self.min_stem_length:
+                logger.info(f"    ⮡ Potential stem: {remaining}")
+                return remaining
+               
         return word
 
     def remove_suffixes(self, word:str) -> str:
@@ -130,29 +153,29 @@ class SyrStemmer:
             # Try each suffix in order (longest to shortest)
             for suffix in suffixes:
                 if word.endswith(suffix):
-                    logger.info(f"[*] Matching suffix(es): {suffix}")
+                    logger.info(f"✳ Matching suffix(es): {suffix}")
                     # Calculate potential stem
-                    potential_stem = word[:-len(suffix)]
-                    logger.info(f"  Potential stem: {potential_stem}")
+                    potential_stem = word[:-len(suffix)]                    
                     # Check if stem meets minimum length requirement
                     if len(potential_stem) >= self.min_stem_length:
                         logger.info(f"  Potential stem: matches minimum length {self.min_stem_length}")
                         logger.info(f"  Potential stem: suffix used is {suffix}")
-                        potential_stem = self.apply_infinitive_rules(potential_stem)
+                        logger.info(f"  Potential stem: {potential_stem}")
+                        potential_stem = self.apply_infinitive_rules(potential_stem)                        
                         return potential_stem
                     else:
-                        logger.info(f"  Potential stem: length too small: {potential_stem}. Will try another suffix.\n")
+                        logger.info(f"  Potential stem: length too small: {potential_stem}. Will try another suffix.")
      
         # Return original word if:
         # 1. Original word is shorter than min_stem_length
         # 2. Longest suffix doesn't match
         # 3. Removing suffix would make word too short
-        return word    
+        return word
 
     def apply_infinitive_rules(self, word:str) -> str:
         """
         Apply the infinitive verb rules to the word after the word has been
-        normalized and within the remove_suffixes function
+        normalized and processed
         """
 
         # Pa'el = ܦܵܥܸܠ = Infinitive
@@ -170,14 +193,15 @@ class SyrStemmer:
                 word_infinitive = word[:-1] + self.syrtools.LETTER_ALAPH                
             elif word[-2] == self.syrtools.LETTER_YUDH:
                 word_infinitive = word[:-2] + self.syrtools.LETTER_ALAPH + word[-1]                
-    
-            logger.info(f"    Infinitive: {word} -> {word_infinitive}")
+                
             return word_infinitive
+
+        return word
 
     def apply_present_tense_rules(self, word:str) -> str:
         """
-        Apply the present continuous verb rules to the word after the word has been
-        normalized and within the remove_suffixes function
+        Apply the present continuous tense verb rules to the word after the 
+        word has been normalized and processed
         """
 
         # P
@@ -195,16 +219,25 @@ class SyrStemmer:
         words: List[str] = self.tokenize_words(text, self.punctuation)
         
         for word in words:
+            logger.info(f"---------------------------------------------------------------------")
             logger.info(f"Word: {word}")
+            logger.info(f"---------------------------------------------------------------------")
             vocalized_word = word
             unvocalized_word = self.normalize(word)
-            processed_word = self.remove_tense(unvocalized_word, self.verb_to_be)
-            processed_word = self.remove_tense(processed_word, self.personal_pronouns)
+            processed_word = self.remove_tense(unvocalized_word, self.verb_to_be, "verb 'to be'")
+            processed_word = self.remove_tense(processed_word, self.personal_pronouns, "personal pronouns")
             
+            # Non-empty word
             if processed_word:
-                word = self.remove_suffixes(processed_word)
-                logger.info(f"Processing input data: {vocalized_word} ← {unvocalized_word} ← {word}\n")
+                processed_word = self.remove_suffixes(processed_word)
+                processed_word = self.remove_bdol_letters(processed_word)
 
+                logger.info(f"⚙ Processing input data ")
+                logger.info(f"  vocalized: {vocalized_word}")
+                logger.info(f"  unvocalized: {unvocalized_word}") 
+                logger.info(f"  processed: {processed_word}")
+            logger.info(f"")
+        
 if __name__ == "__main__":
 
     set_logging(LOGGING_ENABLED)
@@ -214,7 +247,8 @@ if __name__ == "__main__":
         #'ܫܸܡܵܐ ܒܪܝܼܟ݂ܵܐ ܩܐ ܒܪܝܼܟ݂ܵܐ ܢܵܫܵܐ',
         #'ܐܵܢܵܐ ܒܢܸܠܗ ܚܕ ܒܲܝܬܸܐ ܚܕܲܬܸܐ،ܒܵܢܸܐ،ܒܵܢܘܿܝܬܵܐ،‌ܒܢܝܼܬ݂ܵܐ،ܒܲܢܵܝܵܐ،ܒܢܸܠܘܟ',
         "ܒܵܢܝܼܬ݂ܵܐ،ܒܵܢܸܐ،ܚܕܲܬܵܐ،‌ܒܲܢܵܝܵܐ،ܕܝܵܪܵܐ،ܩܝܵܡܵܐ،ܚܝܵܝܵܐ،ܗܘܵܝܵܐ،ܚܝܵܛܵܐ",
-        "ܐܵܢܵܐ ܒܸܟܬܵܒ݂ܵܐ ܝܘܸܢ،ܗܘ ܒܵܩܝܵܡܵܐ ܝܠܸܗ،ܐܲܢܬ̄ ܒܸܒܢܵܝܵܐ ܝܘܲܬܝ،"
+        "ܐܵܢܵܐ ܒܸܟܬܵܒ݂ܵܐ ܝܘܸܢ،ܗܘ ܒܵܩܝܵܡܵܐ ܝܠܸܗ،ܐܲܢܬ̄ ܒܸܒܢܵܝܵܐ ܝܘܲܬܝ،",
+        "ܠܸܫܵܢܵܐ ܕܝܸܡܵܐ"
     ]
 
     Stemmer = SyrStemmer()
