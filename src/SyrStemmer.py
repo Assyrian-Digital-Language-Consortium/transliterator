@@ -17,11 +17,28 @@
 
 import unicodedata
 import re
+import logging
 
 from typing import Tuple, Dict, List
 from SyrTools import SyrTools
 
-# text = "ܠܲܚܡܵܐ ܠܡܕ݂ܝܼܢ݇ܬܵܐ ܒܕܸܡܵܐ ܒܘܼܡܵܐ ܘܲܪܕܵܐ ܘܟܬ݂ܵܒ݂ܵܐ ܒܘܼܫܠܵܐ ܒܲܫܘܼܠܲܢ ܠܸܥܙܵܐ ܘܟܲܪܥܵܐ ܕܐܵܗܵܐ ܕܟܘܼܪܣܝܵܐ ܒܘܼܫܵܠܵܐ ܠܵܒܸܫ"
+# Enable / disable logging
+LOGGING_ENABLED = True
+
+# Configure the logging system
+logging.basicConfig(
+    level=logging.DEBUG,  # Set the threshold level - DEBUG is the lowest
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
+
+# Function to toggle logging
+def set_logging(enabled):
+    if enabled:
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.ERROR)
 
 
 # Algorithm Flowchart
@@ -58,7 +75,7 @@ class SyrStemmer:
         result = []        
         # Process each word
         for word in words:
-            print("word:", word)
+            logger.info(f"Tokenizing: {word}")
             # Replace punctuation with spaces
             for punct in self.punctuation:
                 word = word.replace(punct, ' ')
@@ -87,19 +104,22 @@ class SyrStemmer:
         suffixes = sorted(list(self.suffixes), key=len, reverse=True)        
 
         if len(word) >= self.min_stem_length:
-        
-            print("\n")
+                    
             # Try each suffix in order (longest to shortest)
-            for suffix in suffixes:                
+            for suffix in suffixes:
                 if word.endswith(suffix):
-                    print("suffix:", suffix)
+                    logger.info(f"[*] Matching suffix(es): {suffix}")
                     # Calculate potential stem
                     potential_stem = word[:-len(suffix)]
-                    print("potential:", potential_stem)
+                    logger.info(f"  Potential stem: {potential_stem}")
                     # Check if stem meets minimum length requirement
                     if len(potential_stem) >= self.min_stem_length:
+                        logger.info(f"  Potential stem: matches minimum length {self.min_stem_length}")
+                        logger.info(f"  Potential stem: suffix used is {suffix}")
                         potential_stem = self.apply_infinitive_rules(potential_stem)
                         return potential_stem
+                    else:
+                        logger.info(f"  Potential stem: length too small: {potential_stem}. Will try another suffix.\n")
      
         # Return original word if:
         # 1. Original word is shorter than min_stem_length
@@ -124,13 +144,17 @@ class SyrStemmer:
 
         # If ܝ yudh is in the second or third root position, then replace the 
         # yudh with alaph
-        if word[-1] == 'ܝ':
-            word = word[:-1] + 'ܐ'
+        if word[-1] == self.syrtools.LETTER_YUDH or word[-2] == self.syrtools.LETTER_YUDH:
+            logger.info(f"  ⮡ Applying infinitive verb rules")
+
+            word_applied: str = ''
+            if word[-1] == self.syrtools.LETTER_YUDH:
+                word_infinitive = word[:-1] + self.syrtools.LETTER_ALAPH                
+            elif word[-2] == self.syrtools.LETTER_YUDH:
+                word_infinitive = word[:-2] + self.syrtools.LETTER_ALAPH + word[-1]                
     
-        if word[-2] == 'ܝ':
-            word = word[:-2] + 'ܐ' + word[-1]       
-    
-        return word
+            logger.info(f"    Infinitive: {word} -> {word_infinitive}")
+            return word_infinitive
 
     def stem(self, text: str) -> str:
         """
@@ -145,12 +169,17 @@ class SyrStemmer:
         words: List[str] = self.tokenize_words(text, self.punctuation)
         
         for word in words:
+            logger.info(f"Word: {word}")
             vocalized_word = word
             unvocalized_word = self.normalize(word)            
             word = self.remove_suffixes(unvocalized_word)
-            print("%s -> %s -> %s" % (vocalized_word, unvocalized_word, word))
+            logger.info(f"Processing input data: {vocalized_word} ← {unvocalized_word} ← {word}\n")
 
 if __name__ == "__main__":
+
+    set_logging(LOGGING_ENABLED)
+    
+    # Set initial logging state
     wordlist = [
         #'ܫܸܡܵܐ ܒܪܝܼܟ݂ܵܐ ܩܐ ܒܪܝܼܟ݂ܵܐ ܢܵܫܵܐ',
         #'ܐܵܢܵܐ ܒܢܸܠܗ ܚܕ ܒܲܝܬܸܐ ܚܕܲܬܸܐ،ܒܵܢܸܐ،ܒܵܢܘܿܝܬܵܐ،‌ܒܢܝܼܬ݂ܵܐ،ܒܲܢܵܝܵܐ،ܒܢܸܠܘܟ',
